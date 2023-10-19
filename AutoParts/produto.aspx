@@ -62,11 +62,12 @@
                                 Marca: <b>
                                     <asp:Label ID="lbl_marca" runat="server"></asp:Label></b></h7>
                         </div>
+                        <div class="mt-2">
+                            <asp:TextBox ID="tb_quantidade" runat="server" TextMode="Number" min="1"></asp:TextBox>
+                        </div>
 
                         <div class="buttons d-flex flex-row mt-5 gap-3">
-                            <button class="btn btn-outline-dark">Comprar Agora</button>
-
-                            <button class="btn btn-dark">Adicionar Carrinho</button>
+                            <asp:Button ID="btn_adicionar_carrinho" runat="server" Text="Adicionar Carrinho" CssClass="btn btn-dark" OnClick="btn_adicionar_carrinho_Click" />
                         </div>
 
                     </div>

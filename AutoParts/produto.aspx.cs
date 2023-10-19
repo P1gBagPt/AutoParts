@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Collections;
 
 namespace AutoParts
 {
@@ -41,12 +42,14 @@ namespace AutoParts
                         lbl_preco.Text = product.preco.ToString();
                         lbl_codigo_artigo.Text = product.codigoArtigo;
                         lbl_marca.Text = product.marca.ToString();
-                        //lbl_categoria.Text = product.categoria.ToString();
-                        /* tb_descricao.Text = product.descricao;
-                         ddl_categoria.SelectedValue = product.categoria.ToString();
-                         ddl_marca.SelectedValue = product.marca.ToString();*/
+                        
                         lb_categoria.Text = product.categoria.ToString();
                         lb_categoria.CommandArgument = product.categoria.ToString();
+
+                        tb_quantidade.Text = "1"; // Define o valor padrão como 1
+                        int availableStock = product.stock;
+                        tb_quantidade.Attributes["max"] = availableStock.ToString();
+
 
 
 
@@ -95,12 +98,6 @@ namespace AutoParts
                            lbl_erro.Text = ex.Message;
                         }
 
-
-
-
-
-
-
                     }
                     else
                     {
@@ -116,14 +113,7 @@ namespace AutoParts
                     lbl_erro.ForeColor = System.Drawing.Color.Red;
                 }
 
-
-
-
-
             }
-
-
-
 
         }
 
@@ -223,6 +213,53 @@ namespace AutoParts
 
                 Response.Redirect("montra.aspx?categoryID="+ idCategoriaValue);
             }
+        }
+
+        protected void btn_adicionar_carrinho_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+                int id_user = Convert.ToInt32(Session["userId"].ToString());
+
+                SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+
+                SqlCommand myCommand = new SqlCommand();
+                myCommand.CommandType = CommandType.StoredProcedure;
+                myCommand.CommandText = "registar_user";
+
+                myCommand.Connection = myConn;
+
+                myCommand.Parameters.AddWithValue("@idUser", id_user); 
+                myCommand.Parameters.AddWithValue("@idProduto", productId);
+                myCommand.Parameters.AddWithValue("@quantidade", tb_quantidade.Text);
+
+                SqlParameter valor = new SqlParameter();
+                valor.ParameterName = "@retorno";
+                valor.Direction = ParameterDirection.Output;
+                valor.SqlDbType = SqlDbType.Int;
+
+                myCommand.Parameters.Add(valor);
+
+                myConn.Open();
+                myCommand.ExecuteNonQuery();
+
+                int resposta = Convert.ToInt32(myCommand.Parameters["@retorno"].Value);
+
+                myConn.Close();
+
+                if (resposta == 0)
+                {
+                    lbl_erro.Text = "Email já usado tenta outro!";
+                    lbl_erro.ForeColor = System.Drawing.Color.Red;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            
         }
     }
 }
