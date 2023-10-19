@@ -59,7 +59,7 @@
                                                 <th scope="col">Categoria</th>
                                                 <th scope="col">Editar</th>
                                                 <th scope="col">Estado</th>
-                                                <th scope="col">Desativar</th>
+                                                <th scope="col">Ativar/Desativar</th>
                                             </tr>
                                         </thead>
                                     </HeaderTemplate>
@@ -82,8 +82,9 @@
                                                     <asp:Image ID="imgEstado" runat="server" ImageUrl='<%# Convert.ToBoolean(Eval("estado")) ? "admin_assets/img/sim.png" : "admin_assets/img/nao.png" %>' />
                                                 </td>
                                                 <td scope="row">
-
+                                                    <asp:LinkButton ID="lb_ativar_desativar" runat="server" CssClass='<%# Convert.ToBoolean(Eval("estado")) ? "btn btn-danger" : "btn btn-success" %>' CommandArgument='<%# Eval("id_produto") %>' OnCommand="lb_ativar_desativar_Click" CommandName="AtivarDesativar"><%# Convert.ToBoolean(Eval("estado")) ? "Desativar" : "Ativar" %></asp:LinkButton>
                                                 </td>
+  
                                             </tr>
                                         </tbody>
                                     </ItemTemplate>

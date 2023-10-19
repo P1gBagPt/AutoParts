@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace AutoParts
 {
@@ -16,6 +17,12 @@ namespace AutoParts
         readonly PagedDataSource _pgsource = new PagedDataSource();
         int _firstIndex, _lastIndex;
         private int _pageSize = 12;
+        private DataTable _dtOriginal;
+        public string query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+    "FROM produtos p WHERE estado = 'true';";
+        public string orderByClause = "";
+        public string categotiaFilter = "";
+        public string marcaFilter = "";
 
         private int CurrentPage
         {
@@ -34,15 +41,18 @@ namespace AutoParts
         }
         protected void Page_Load(object sender, EventArgs e)
         {
+            BindDataIntoRepeater(query);
+
             try
             {
-                BindDataIntoRepeater();
 
+
+                lb_categoria_filtro_tudo.CssClass = "tab active";
 
                 try
                 {
                     var connectionString = ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ToString();
-                    string query = "SELECT TOP 6 nome FROM marcas";
+                    string query = "SELECT TOP 10 id_marca, nome FROM marcas";
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
@@ -69,7 +79,7 @@ namespace AutoParts
                     
 
 
-                    string query2 = "SELECT TOP 6 categoria FROM categoria";
+                    string query2 = "SELECT TOP 6 id_categoria, categoria FROM categoria";
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
@@ -110,11 +120,10 @@ namespace AutoParts
             }
         }
 
-        static DataTable GetDataFromDb()
+        static DataTable GetDataFromDb(string query)
         {
             var con = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ToString());
-            string query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
-    "FROM produtos p WHERE estado = 'true';";
+            
 
 
             var da = new SqlDataAdapter(query, con);
@@ -139,9 +148,9 @@ namespace AutoParts
         }
 
 
-        private void BindDataIntoRepeater()
+        private void BindDataIntoRepeater(string query)
         {
-            var dt = GetDataFromDb();
+            var dt = GetDataFromDb(query);
             _pgsource.DataSource = dt.DefaultView;
             _pgsource.AllowPaging = true;
             // Number of items to be displayed in the Repeater
@@ -165,7 +174,8 @@ namespace AutoParts
             HandlePaging();
         }
 
-        private void HandlePaging()
+        
+            private void HandlePaging()
         {
             var dt = new DataTable();
             dt.Columns.Add("PageIndex"); //Start from 0
@@ -204,29 +214,29 @@ namespace AutoParts
         protected void lbFirst_Click(object sender, EventArgs e)
         {
             CurrentPage = 0;
-            BindDataIntoRepeater();
+            BindDataIntoRepeater(query);
         }
         protected void lbLast_Click(object sender, EventArgs e)
         {
             CurrentPage = (Convert.ToInt32(ViewState["TotalPages"]) - 1);
-            BindDataIntoRepeater();
+            BindDataIntoRepeater(query);
         }
         protected void lbPrevious_Click(object sender, EventArgs e)
         {
             CurrentPage -= 1;
-            BindDataIntoRepeater();
+            BindDataIntoRepeater(query);
         }
         protected void lbNext_Click(object sender, EventArgs e)
         {
             CurrentPage += 1;
-            BindDataIntoRepeater();
+            BindDataIntoRepeater(query);
         }
 
         protected void rptPaging_ItemCommand(object source, DataListCommandEventArgs e)
         {
             if (!e.CommandName.Equals("newPage")) return;
             CurrentPage = Convert.ToInt32(e.CommandArgument.ToString());
-            BindDataIntoRepeater();
+            BindDataIntoRepeater(query);
         }
 
         protected void rptPaging_ItemDataBound(object sender, DataListItemEventArgs e)
@@ -262,9 +272,218 @@ namespace AutoParts
             }
         }
 
+        protected void ddl_ordenar_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedValue = ddl_ordenar.SelectedValue;
+            orderByClause = "";
+
+            switch (selectedValue)
+            {
+                case "nome_asc":
+                    orderByClause = "ORDER BY p.nome ASC";
+                    break;
+                case "nome_desc":
+                    orderByClause = "ORDER BY p.nome DESC";
+                    break;
+                case "preco_asc":
+                    orderByClause = "ORDER BY p.preco ASC";
+                    break;
+                case "preco_desc":
+                    orderByClause = "ORDER BY p.preco DESC";
+                    break;
+                default:
+                    // Lidar com caso inválido ou padrão aqui
+                    break;
+            }
+
+            query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+            "FROM produtos p WHERE estado = 'true' " + orderByClause;
+
+            BindDataIntoRepeater(query);
+        }
+
+        protected void lb_categoria_filtro_Command(object sender, CommandEventArgs e)
+        {
+            if (e.CommandName == "Categoria")
+            {
+                categotiaFilter = e.CommandArgument.ToString();
+
+                MarkAllTabsInactive();
+                lb_categoria_filtro_tudo.CssClass = "tab";
+                MarkSelectedTabActive(e.CommandArgument.ToString());
+
+                query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+                        "FROM produtos p WHERE estado = 'true' AND categoria = " + categotiaFilter + orderByClause;
+
+                // Bind products based on the selected category
+                BindDataIntoRepeater(query);
+
+
+                LoadBrands();
+
+            }
+
+
+        }
+
+        private void LoadBrands()
+        {
+            // Clear the Repeater2 before binding new data
+            Repeater2.DataSource = null;
+            Repeater2.DataBind();
+
+            string query4 = @"SELECT id_marca, nome 
+        FROM marcas 
+        WHERE id_marca IN (SELECT DISTINCT marca FROM produtos WHERE categoria = @categoria)";
+
+            try
+            {
+                var connectionString = ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ToString();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+
+                    using (SqlCommand command = new SqlCommand(query4, con))
+                    {
+                        // Use the correct parameter name and value
+                        command.Parameters.AddWithValue("@categoria", categotiaFilter);
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                Repeater2.DataSource = reader;
+                                Repeater2.DataBind();
+                            }
+                            else
+                            {
+                                // Handle the case when no rows are returned (e.g., display a message).
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions when executing the query for brands.
+            }
+        }
+
+
+
+        protected void lb_categoria_filtro_tudo_Command(object sender, CommandEventArgs e)
+        {
+            if (e.CommandName == "CategoriaTudo")
+            {
+
+                //categotiaFilter = "";
+
+                if (categotiaFilter == "")
+                {
+                    query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+           "FROM produtos p WHERE estado = 'true' " + orderByClause;
+                }
+                else
+                {
+                    query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+           "FROM produtos p WHERE estado = 'true' AND categoria = " + categotiaFilter + " " + orderByClause;
+                }
+               
+
+                BindDataIntoRepeater(query);
+            }
+        }
+
         protected void Repeater1_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             SetProductImage(e.Item);
         }
+
+
+
+
+        protected void lb_marca_Command(object sender, CommandEventArgs e)
+        {
+            if (e.CommandName == "Marca")
+            {
+                marcaFilter = e.CommandArgument.ToString();
+
+                // Output the selected marca for debugging
+                Debug.WriteLine("Selected marca: " + marcaFilter);
+
+                // Mark the "Todas as Marcas" option as inactive
+                lb_marcas_tudo.CssClass = "tab";
+
+                // Update the query based on whether a category filter is selected
+                if (string.IsNullOrEmpty(categotiaFilter))
+                {
+                    query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+                        "FROM produtos p WHERE estado = 'true' AND marca = " + marcaFilter + " " + orderByClause;
+                }
+                else
+                {
+                    query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+                        "FROM produtos p WHERE estado = 'true' AND categoria = " + categotiaFilter + " AND marca = " + marcaFilter + " " + orderByClause;
+                }
+
+                // Bind data based on the selected brand
+                BindDataIntoRepeater(query);
+            }
+        }
+
+
+
+        protected void lb_marcas_tudo_Command(object sender, CommandEventArgs e)
+        {
+            if (e.CommandName == "MarcasTudo")
+            {
+                if(categotiaFilter == "")
+                {
+                    query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+                    "FROM produtos p WHERE estado = 'true' " + orderByClause;
+                }
+                else
+                {
+                    query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+                    "FROM produtos p WHERE estado = 'true' AND categoria = " + categotiaFilter + orderByClause;
+                }
+
+
+
+                BindDataIntoRepeater(query);
+            }
+        }
+
+
+        private void MarkSelectedTabActive(string selectedCategory)
+        {
+            foreach (RepeaterItem item in Repeater3.Items)
+            {
+                LinkButton lb_categoria_filtro = (LinkButton)item.FindControl("lb_categoria_filtro");
+                string categoryValue = lb_categoria_filtro.CommandArgument;
+
+                if (categoryValue == selectedCategory)
+                {
+                    lb_categoria_filtro.CssClass = "tab active";
+                }
+                else
+                {
+                    lb_categoria_filtro.CssClass = "tab";
+                }
+            }
+        }
+
+
+        private void MarkAllTabsInactive()
+        {
+            // Loop through all the tabs and set them to be inactive
+            foreach (RepeaterItem item in Repeater3.Items)
+            {
+                LinkButton lb_categoria_filtro = (LinkButton)item.FindControl("lb_categoria_filtro");
+                lb_categoria_filtro.CssClass = "tab";
+            }
+        }
+
     }
 }

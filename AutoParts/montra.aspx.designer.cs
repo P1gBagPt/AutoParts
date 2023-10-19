@@ -15,6 +15,24 @@ namespace AutoParts
     {
 
         /// <summary>
+        /// updatePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel updatePanel;
+
+        /// <summary>
+        /// lb_categoria_filtro_tudo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton lb_categoria_filtro_tudo;
+
+        /// <summary>
         /// Repeater3 control.
         /// </summary>
         /// <remarks>
@@ -69,6 +87,24 @@ namespace AutoParts
         protected global::System.Web.UI.WebControls.TextBox tb_procurar;
 
         /// <summary>
+        /// ddl_ordenar control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddl_ordenar;
+
+        /// <summary>
+        /// lb_marcas_tudo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton lb_marcas_tudo;
+
+        /// <summary>
         /// Repeater2 control.
         /// </summary>
         /// <remarks>
@@ -76,5 +112,19 @@ namespace AutoParts
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Repeater Repeater2;
+
+        /// <summary>
+        /// Master property.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated property.
+        /// </remarks>
+        public new AutoParts.main_master Master
+        {
+            get
+            {
+                return ((AutoParts.main_master)(base.Master));
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using static AutoParts.bo_categorias;
@@ -199,6 +200,42 @@ namespace AutoParts
             }
         }
 
+        protected void lb_ativar_desativar_Click(object sender, CommandEventArgs e)
+        {
+            // Obtenha o ID do produto a partir dos dados do item atual (usando Eval, por exemplo).
+            //int produtoID = Convert.ToInt32(Eval("id_produto"));
+            if (e.CommandName == "AtivarDesativar")
+            {
+                int produtoID = Convert.ToInt32(e.CommandArgument);
+
+                // Crie uma conexão com o banco de dados.
+                using (SqlConnection con = new SqlConnection(WebConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ToString()))
+                {
+                    // Abra a conexão.
+                    con.Open();
+
+                    // Consulta SQL para atualizar o estado do produto.
+                    string query = "UPDATE produtos SET estado = CASE WHEN estado = 1 THEN 0 ELSE 1 END WHERE id_produto = @produtoID";
+
+                    // Crie e configure o comando SQL.
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@produtoID", produtoID);
+
+                        // Execute a consulta.
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        // Verifique se a consulta foi executada com sucesso.
+                        if (rowsAffected > 0)
+                        {
+                            // Atualize a interface do usuário para refletir a mudança no estado do produto, se necessário.
+                            BindDataIntoRepeater();
+
+                        }
+                    }
+                }
+            }
+        }
 
         protected void editar_produto_Command(object sender, CommandEventArgs e)
         {
