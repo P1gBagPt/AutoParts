@@ -8,6 +8,12 @@
 
     <link href="assets/css/produto.css" rel="stylesheet" />
 
+    <style>
+        .categoriaA a{
+            text-decoration: none;
+        }
+    </style>
+
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <hr />
@@ -29,7 +35,7 @@
                                 <asp:Label ID="lbl_nome" runat="server"></asp:Label>
                             </h3>
                         </div>
-                        <div class="mt-2">
+                        <div class="mt-2 categoriaA">
                                 <p>
                                     <asp:LinkButton ID="lb_categoria" runat="server" OnCommand="lb_categoria_Command" CommandName="CategoriaMontra">LinkButton</asp:LinkButton>
                                 </p>
@@ -59,6 +65,7 @@
 
                         <div class="buttons d-flex flex-row mt-5 gap-3">
                             <button class="btn btn-outline-dark">Comprar Agora</button>
+
                             <button class="btn btn-dark">Adicionar Carrinho</button>
                         </div>
 
