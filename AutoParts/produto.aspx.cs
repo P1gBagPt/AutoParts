@@ -41,10 +41,13 @@ namespace AutoParts
                         lbl_preco.Text = product.preco.ToString();
                         lbl_codigo_artigo.Text = product.codigoArtigo;
                         lbl_marca.Text = product.marca.ToString();
-                        lbl_categoria.Text = product.categoria.ToString();
+                        //lbl_categoria.Text = product.categoria.ToString();
                         /* tb_descricao.Text = product.descricao;
                          ddl_categoria.SelectedValue = product.categoria.ToString();
                          ddl_marca.SelectedValue = product.marca.ToString();*/
+                        lb_categoria.Text = product.categoria.ToString();
+                        lb_categoria.CommandArgument = product.categoria.ToString();
+
 
 
                         try
@@ -182,6 +185,44 @@ namespace AutoParts
             }
 
             return product;
+        }
+
+        protected void lb_categoria_Command(object sender, CommandEventArgs e)
+        {
+            if (e.CommandName == "CategoriaMontra")
+            {
+                int idCategoriaValue = 0;
+
+                string idCategoria = e.CommandArgument.ToString();
+
+                string connectionString = ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString;
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT id_categoria FROM categoria WHERE categoria = @categoria";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@categoria", idCategoria);
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            idCategoriaValue = reader.GetInt32(0); // Retrieve the value from the first column (assuming it's an integer)
+
+                            // Now you have the idCategoriaValue, and you can use it as needed.
+                        }
+                        else
+                        {
+                            // Handle the case where no matching category is found.
+                        }
+                    }
+                }
+
+                Response.Redirect("montra.aspx?categoryID="+ idCategoriaValue);
+            }
         }
     }
 }

@@ -18,11 +18,12 @@ namespace AutoParts
         int _firstIndex, _lastIndex;
         private int _pageSize = 12;
         private DataTable _dtOriginal;
-        public string query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+        public static string query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
     "FROM produtos p WHERE estado = 'true';";
-        public string orderByClause = "";
-        public string categotiaFilter = "";
-        public string marcaFilter = "";
+        public static string orderByClause = "";
+        public static string categotiaFilter = "";
+        public static string marcaFilter = "";
+        public static int categoryId;
 
         private int CurrentPage
         {
@@ -41,13 +42,35 @@ namespace AutoParts
         }
         protected void Page_Load(object sender, EventArgs e)
         {
-            BindDataIntoRepeater(query);
 
+            lb_categoria_filtro_tudo.CssClass = "tab active";
+
+            if (!IsPostBack)
+            {
+                if (Request.QueryString["categoryID"] != null)
+                {
+                    categoryId = Convert.ToInt32(Request.QueryString["categoryID"]);
+
+                    query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+                        "FROM produtos p WHERE estado = 'true' AND categoria = " + categoryId;
+
+                    categotiaFilter = categoryId.ToString();
+
+
+                    lb_categoria_filtro_tudo.CssClass = "tab";
+
+
+
+                    BindDataIntoRepeater(query);
+                }
+            }
+            
+                BindDataIntoRepeater(query);
+            
             try
             {
 
 
-                lb_categoria_filtro_tudo.CssClass = "tab active";
 
                 try
                 {
@@ -76,7 +99,7 @@ namespace AutoParts
                         con.Close();
                     }
 
-                    
+
 
 
                     string query2 = "SELECT TOP 6 id_categoria, categoria FROM categoria";
@@ -100,6 +123,7 @@ namespace AutoParts
                                 }
                             }
                         }
+                        con.Close();
                     }
 
 
@@ -118,13 +142,27 @@ namespace AutoParts
 
 
             }
+
+            if (Request.QueryString["categoryID"] != null)
+            {
+                lb_categoria_filtro_tudo.CssClass = "tab";
+
+                MarkAllTabsInactive(); // Make all tabs inactive
+                MarkSelectedTabActive(categotiaFilter); // Make the selected tab active
+            }
+            else
+            {
+                lb_categoria_filtro_tudo.CssClass = "tab active";
+
+            }
+
+
+
         }
 
         static DataTable GetDataFromDb(string query)
         {
             var con = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ToString());
-            
-
 
             var da = new SqlDataAdapter(query, con);
             var dt = new DataTable();
@@ -174,8 +212,8 @@ namespace AutoParts
             HandlePaging();
         }
 
-        
-            private void HandlePaging()
+
+        private void HandlePaging()
         {
             var dt = new DataTable();
             dt.Columns.Add("PageIndex"); //Start from 0
@@ -296,8 +334,43 @@ namespace AutoParts
                     break;
             }
 
-            query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
-            "FROM produtos p WHERE estado = 'true' " + orderByClause;
+
+
+            /*query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+                "FROM produtos p WHERE estado = 'true' AND categoria = " + categotiaFilter + " " + orderByClause;*/
+
+            if (!string.IsNullOrEmpty(categotiaFilter) && !string.IsNullOrEmpty(marcaFilter))
+            {
+                query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+     "FROM produtos p WHERE estado = 'true' AND categoria = " + categotiaFilter + " AND marca = " + marcaFilter + " " + orderByClause;
+            }
+            else if (!string.IsNullOrEmpty(categotiaFilter))
+            {
+                query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+               "FROM produtos p WHERE estado = 'true' AND categoria = " + categotiaFilter + " " + orderByClause;
+
+                MarkAllTabsInactive(); // Make all tabs inactive
+                lb_categoria_filtro_tudo.CssClass = "tab";
+
+
+                MarkSelectedTabActive(categotiaFilter); // Make the selected tab active
+            }
+            else
+            {
+                query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+                "FROM produtos p WHERE estado = 'true' " + orderByClause;
+            }
+
+            if(categotiaFilter == null && categotiaFilter == "")
+            {
+                MarkAllTabsInactive(); // Make all tabs inactive
+                lb_categoria_filtro_tudo.CssClass = "tab active";
+
+
+                MarkSelectedTabActive(categotiaFilter); // Make the selected tab active
+            }
+            
+
 
             BindDataIntoRepeater(query);
         }
@@ -306,6 +379,7 @@ namespace AutoParts
         {
             if (e.CommandName == "Categoria")
             {
+                marcaFilter = "";
                 categotiaFilter = e.CommandArgument.ToString();
 
                 MarkAllTabsInactive();
@@ -317,56 +391,6 @@ namespace AutoParts
 
                 // Bind products based on the selected category
                 BindDataIntoRepeater(query);
-
-
-                LoadBrands();
-
-            }
-
-
-        }
-
-        private void LoadBrands()
-        {
-            // Clear the Repeater2 before binding new data
-            Repeater2.DataSource = null;
-            Repeater2.DataBind();
-
-            string query4 = @"SELECT id_marca, nome 
-        FROM marcas 
-        WHERE id_marca IN (SELECT DISTINCT marca FROM produtos WHERE categoria = @categoria)";
-
-            try
-            {
-                var connectionString = ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ToString();
-
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    con.Open();
-
-                    using (SqlCommand command = new SqlCommand(query4, con))
-                    {
-                        // Use the correct parameter name and value
-                        command.Parameters.AddWithValue("@categoria", categotiaFilter);
-
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            if (reader.HasRows)
-                            {
-                                Repeater2.DataSource = reader;
-                                Repeater2.DataBind();
-                            }
-                            else
-                            {
-                                // Handle the case when no rows are returned (e.g., display a message).
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Handle any exceptions when executing the query for brands.
             }
         }
 
@@ -376,20 +400,11 @@ namespace AutoParts
         {
             if (e.CommandName == "CategoriaTudo")
             {
+                marcaFilter = "";// Clear the marca filter
+                categotiaFilter = ""; // Clear the category filter
 
-                //categotiaFilter = "";
-
-                if (categotiaFilter == "")
-                {
-                    query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
-           "FROM produtos p WHERE estado = 'true' " + orderByClause;
-                }
-                else
-                {
-                    query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
-           "FROM produtos p WHERE estado = 'true' AND categoria = " + categotiaFilter + " " + orderByClause;
-                }
-               
+                query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+                        "FROM produtos p WHERE estado = 'true' " + orderByClause;
 
                 BindDataIntoRepeater(query);
             }
@@ -409,11 +424,8 @@ namespace AutoParts
             {
                 marcaFilter = e.CommandArgument.ToString();
 
-                // Output the selected marca for debugging
-                Debug.WriteLine("Selected marca: " + marcaFilter);
-
                 // Mark the "Todas as Marcas" option as inactive
-                lb_marcas_tudo.CssClass = "tab";
+                // lb_marcas_tudo.CssClass = "tab";
 
                 // Update the query based on whether a category filter is selected
                 if (string.IsNullOrEmpty(categotiaFilter))
@@ -434,11 +446,12 @@ namespace AutoParts
 
 
 
+
         protected void lb_marcas_tudo_Command(object sender, CommandEventArgs e)
         {
             if (e.CommandName == "MarcasTudo")
             {
-                if(categotiaFilter == "")
+                if (categotiaFilter == "")
                 {
                     query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
                     "FROM produtos p WHERE estado = 'true' " + orderByClause;

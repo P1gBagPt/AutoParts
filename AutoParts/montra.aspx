@@ -62,7 +62,9 @@
                                                     <div class="product-item col-lg-3 col-md-3 col-sm-4">
                                                         <div class="image-holder" style="width: 250px; height: 250px; text-align: center; overflow: hidden;">
                                                             <!-- Image -->
-                                                            <asp:Image ID="img_produto" runat="server" class="product-image" Style="width: 100%; height: 100%;" />
+                                                            <a href='<%# "produto.aspx?productId=" + Eval("id_produto") %>'>
+                                                                <asp:Image ID="img_produto" runat="server" class="product-image" Style="width: 100%; height: 100%;" />
+                                                             </a>
                                                         </div>
 
                                                         <div class="product-detail">

@@ -30,11 +30,13 @@
                             </h3>
                         </div>
                         <div class="mt-2">
-                            <p>
-                                <asp:Label ID="lbl_categoria" runat="server"></asp:Label>
-                            </p>
+                                <p>
+                                    <asp:LinkButton ID="lb_categoria" runat="server" OnCommand="lb_categoria_Command" CommandName="CategoriaMontra">LinkButton</asp:LinkButton>
+                                </p>
+                            
                         </div>
                         <div class="mt-2 pr-3 content">
+                            Descrição:
                             <p>
                                 <asp:Label ID="lbl_descricao" runat="server"></asp:Label>
                             </p>
