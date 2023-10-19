@@ -24,6 +24,7 @@ namespace AutoParts
         public static string categotiaFilter = "";
         public static string marcaFilter = "";
         public static int categoryId;
+        public static string procurar;
 
         private int CurrentPage
         {
@@ -64,9 +65,9 @@ namespace AutoParts
                     BindDataIntoRepeater(query);
                 }
             }
-            
-                BindDataIntoRepeater(query);
-            
+
+            BindDataIntoRepeater(query);
+
             try
             {
 
@@ -361,7 +362,7 @@ namespace AutoParts
                 "FROM produtos p WHERE estado = 'true' " + orderByClause;
             }
 
-            if(categotiaFilter == null && categotiaFilter == "")
+            if (categotiaFilter == null && categotiaFilter == "")
             {
                 MarkAllTabsInactive(); // Make all tabs inactive
                 lb_categoria_filtro_tudo.CssClass = "tab active";
@@ -369,7 +370,7 @@ namespace AutoParts
 
                 MarkSelectedTabActive(categotiaFilter); // Make the selected tab active
             }
-            
+
 
 
             BindDataIntoRepeater(query);
@@ -487,6 +488,24 @@ namespace AutoParts
             }
         }
 
+        protected void btn_pesquisar_Command(object sender, CommandEventArgs e)
+        {
+            if (e.CommandName == "Procurar")
+            {
+                procurar = tb_procurar.Text;
+
+                query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+"FROM produtos p " +
+"WHERE estado = 'true' AND (p.nome LIKE '%" + procurar + "%' OR p.numero_artigo LIKE '%" + procurar + "%')";
+
+
+
+
+                BindDataIntoRepeater(query);
+
+
+            }
+        }
 
         private void MarkAllTabsInactive()
         {

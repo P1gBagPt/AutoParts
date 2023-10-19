@@ -64,7 +64,7 @@
                                                             <!-- Image -->
                                                             <a href='<%# "produto.aspx?productId=" + Eval("id_produto") %>'>
                                                                 <asp:Image ID="img_produto" runat="server" class="product-image" Style="width: 100%; height: 100%;" />
-                                                             </a>
+                                                            </a>
                                                         </div>
 
                                                         <div class="product-detail">
@@ -121,7 +121,15 @@
                                     <div class="widget-search-bar">
                                         <div role="search" class="d-flex">
                                             <asp:TextBox ID="tb_procurar" class="search-field" placeholder="Procurar Produto" runat="server"></asp:TextBox>
-                                            <button class="btn btn-dark"><i class="icon icon-search"></i></button>
+                                            <asp:LinkButton ID="btn_pesquisar" runat="server" CssClass="btn btn-dark" OnCommand="btn_pesquisar_Command" CommandName="Procurar">
+    <i class="icon icon-search"></i>
+                                            </asp:LinkButton>
+
+
+
+
+
+
                                         </div>
                                         <div class="d-flex" style="margin-top: 20px;">
                                             <asp:DropDownList ID="ddl_ordenar" class="u-full-width" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddl_ordenar_SelectedIndexChanged">

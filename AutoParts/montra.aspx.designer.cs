@@ -87,6 +87,15 @@ namespace AutoParts
         protected global::System.Web.UI.WebControls.TextBox tb_procurar;
 
         /// <summary>
+        /// btn_pesquisar control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btn_pesquisar;
+
+        /// <summary>
         /// ddl_ordenar control.
         /// </summary>
         /// <remarks>
