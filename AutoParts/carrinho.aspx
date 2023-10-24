@@ -104,7 +104,7 @@
                             </table>
                         </div>
                         <div class="button-wrap">
-                            <a href="montra.aspx">
+                            <a>
                                 <asp:Button ID="btn_continuar_comprar" runat="server" class="btn btn-dark btn-medium" Text="Continuar a comprar" OnClick="btn_continuar_comprar_Click" /></a>
                             <a>
                                 <asp:Button ID="btn_checkout" runat="server" class="btn btn-dark btn-medium" Text="Proceder para o Checkout" OnClick="btn_checkout_Click"/></a>

@@ -16,6 +16,7 @@ namespace AutoParts
  
         public static int id_user;
         public static decimal total = 0;
+        public static int encomenda_id = 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -93,10 +94,59 @@ namespace AutoParts
                 retorno.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(retorno);
 
+                encomenda_id = Convert.ToInt32(cmd.Parameters["@retorno"].Value);
+
                 myConn.Open();
                 cmd.ExecuteNonQuery();
 
                 myConn.Close();
+
+
+
+                try
+                {
+                    string selectedCountry = ddl_pais.SelectedValue;
+
+                    SqlConnection myConn2 = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+
+
+                    SqlCommand cmd2 = new SqlCommand();
+
+                    cmd2.CommandType = CommandType.StoredProcedure;
+                    cmd2.CommandText = "faturacao_encomenda";
+
+                    cmd2.Connection = myConn2;
+
+                    cmd2.Parameters.AddWithValue("@userId", id_user);
+                    cmd2.Parameters.AddWithValue("@encomenda_id", encomenda_id);
+                    cmd2.Parameters.AddWithValue("@nome", tb_nome.Text);
+                    cmd2.Parameters.AddWithValue("@alcunha", tb_alcunha.Text);
+                    cmd2.Parameters.AddWithValue("@rua", tb_rua.Text);
+                    cmd2.Parameters.AddWithValue("@apartamento", tb_apartamento.Text);
+                    cmd2.Parameters.AddWithValue("@pais", selectedCountry);
+                    cmd2.Parameters.AddWithValue("@cidade", tb_cidade.Text);
+                    cmd2.Parameters.AddWithValue("@codigoPostal", tb_codigo_postal.Text);
+                    cmd2.Parameters.AddWithValue("@telemovel", tb_telemovel.Text);
+
+                    SqlParameter retorno2 = new SqlParameter("@retorno", SqlDbType.Int);
+                    retorno2.Direction = ParameterDirection.Output;
+                    cmd2.Parameters.Add(retorno2);
+
+
+
+                    myConn2.Open();
+                    cmd2.ExecuteNonQuery();
+
+                    myConn2.Close();
+                }
+                catch (Exception ex)
+                {
+                    lbl_erro.Text = ex.Message;
+                }
+
+
+
+
             }
             catch (Exception ex)
             {
