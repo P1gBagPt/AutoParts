@@ -70,10 +70,13 @@
                             <asp:Button ID="btn_adicionar_carrinho" runat="server" Text="Adicionar Carrinho" CssClass="btn btn-dark" OnClick="btn_adicionar_carrinho_Click" />
                         </div>
 
+                        <div class="mt-2">
+                            <asp:Label ID="lbl_erro" runat="server"></asp:Label>
+                        </div>
+
                     </div>
 
                 </div>
-                <asp:Label ID="lbl_erro" runat="server"></asp:Label>
             </div>
         </div>
     </div>

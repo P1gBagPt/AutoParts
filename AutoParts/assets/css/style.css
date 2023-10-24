@@ -2504,7 +2504,7 @@ a.blog-categories:hover{
   background: var(--light-grey-color);
 }
 .qty-number input{
-  width: 55px;
+  width: 65px;
   text-align: center;
   margin: 0 10px;
   border-radius: 0;

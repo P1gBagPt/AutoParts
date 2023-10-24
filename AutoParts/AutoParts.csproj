@@ -466,6 +466,8 @@
     <Content Include="bo_marcas.aspx" />
     <Content Include="bo_produtos.aspx" />
     <Content Include="bo_users.aspx" />
+    <Content Include="carrinho.aspx" />
+    <Content Include="checkout.aspx" />
     <Content Include="conta.aspx" />
     <Content Include="index.aspx" />
     <Content Include="index_admin.aspx" />
@@ -565,6 +567,20 @@
     </Compile>
     <Compile Include="bo_users.aspx.designer.cs">
       <DependentUpon>bo_users.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="carrinho.aspx.cs">
+      <DependentUpon>carrinho.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="carrinho.aspx.designer.cs">
+      <DependentUpon>carrinho.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="checkout.aspx.cs">
+      <DependentUpon>checkout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="checkout.aspx.designer.cs">
+      <DependentUpon>checkout.aspx</DependentUpon>
     </Compile>
     <Compile Include="conta.aspx.cs">
       <DependentUpon>conta.aspx</DependentUpon>

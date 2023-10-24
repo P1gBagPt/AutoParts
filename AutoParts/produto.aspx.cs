@@ -217,22 +217,25 @@ namespace AutoParts
 
         protected void btn_adicionar_carrinho_Click(object sender, EventArgs e)
         {
+            //TEMP
+            Session["userId"] = 7;
             try
             {
 
                 int id_user = Convert.ToInt32(Session["userId"].ToString());
+                int quantidade = Convert.ToInt32(tb_quantidade.Text);
 
                 SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
 
                 SqlCommand myCommand = new SqlCommand();
                 myCommand.CommandType = CommandType.StoredProcedure;
-                myCommand.CommandText = "registar_user";
+                myCommand.CommandText = "inserir_carrinho";
 
                 myCommand.Connection = myConn;
 
-                myCommand.Parameters.AddWithValue("@idUser", id_user); 
+                myCommand.Parameters.AddWithValue("@idUser", id_user);
                 myCommand.Parameters.AddWithValue("@idProduto", productId);
-                myCommand.Parameters.AddWithValue("@quantidade", tb_quantidade.Text);
+                myCommand.Parameters.AddWithValue("@quantidade", quantidade);
 
                 SqlParameter valor = new SqlParameter();
                 valor.ParameterName = "@retorno";
@@ -248,10 +251,20 @@ namespace AutoParts
 
                 myConn.Close();
 
-                if (resposta == 0)
+                if (resposta == 2)
                 {
-                    lbl_erro.Text = "Email já usado tenta outro!";
-                    lbl_erro.ForeColor = System.Drawing.Color.Red;
+                    lbl_erro.Enabled = true;
+                    lbl_erro.Visible = true;
+                    lbl_erro.Text = "Carrinho atualizado com sucesso!";
+                    lbl_erro.ForeColor = System.Drawing.Color.Green;
+                }
+
+                if (resposta == 1)
+                {
+                    lbl_erro.Enabled = true;
+                    lbl_erro.Visible = true;
+                    lbl_erro.Text = "Produto adicionado ao carrinho!";
+                    lbl_erro.ForeColor = System.Drawing.Color.Green;
                 }
             }
             catch (Exception ex)
