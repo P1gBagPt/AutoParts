@@ -19,7 +19,7 @@ namespace AutoParts
         private int _pageSize = 12;
         private DataTable _dtOriginal;
         public static string query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
-    "FROM produtos p WHERE estado = 'true';";
+    "FROM produtos p WHERE estado = 'true' AND stock > 0;";
         public static string orderByClause = "";
         public static string categotiaFilter = "";
         public static string marcaFilter = "";

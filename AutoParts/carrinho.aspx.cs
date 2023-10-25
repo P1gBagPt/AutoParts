@@ -48,33 +48,75 @@ namespace AutoParts
         }
         protected void Page_Load(object sender, EventArgs e)
         {
+            Session["userId"] = 7;
+            id_user = Convert.ToInt32(Session["userId"].ToString());
+
             total = 0;
             if (!IsPostBack)
             {
                 total = 0;
 
+
+
             }
 
 
-                Session["userId"] = 7;
+            try
+            {
+                SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
 
-            id_user = Convert.ToInt32(Session["userId"].ToString());
+                SqlCommand cmd = new SqlCommand();
 
-            query = "SELECT c.id_carrinho, c.quantidade, p.*, p.stock " +
-    "FROM carrinho c " +
-    "INNER JOIN produtos p ON c.produtoID = p.id_produto " +
-    "WHERE c.userID = " + id_user;
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "total_carrinho";
+
+                cmd.Connection = myConn;
+
+                cmd.Parameters.AddWithValue("@userId", id_user);
+
+                SqlParameter totalRetorno = new SqlParameter("@total", SqlDbType.Float);
+                totalRetorno.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(totalRetorno);
+
+                myConn.Open();
+                cmd.ExecuteNonQuery();
+
+                decimal totali = (cmd.Parameters["@total"].Value != DBNull.Value) ? Convert.ToDecimal(cmd.Parameters["@total"].Value) : 0;
+
+                if (totali == 0)
+                {
+                    lbl_vazio.Text = "O Carrinho está vazio adiciona alguns produtos!";
+                    lbl_vazio.Enabled = true;
+                    lbl_vazio.Visible = true;
+                    lbl_vazio.ForeColor = Color.Red;
 
 
-                BindDataIntoRepeater(query);
-           
+                    ltTotal.Text = "";
+                    btn_checkout.Visible = false;
+                    btn_checkout.Enabled = false;
+                }
+                else
+                {
 
 
+                    query = "SELECT c.id_carrinho, c.quantidade, p.*, p.stock " +
+            "FROM carrinho c " +
+            "INNER JOIN produtos p ON c.produtoID = p.id_produto " +
+            "WHERE c.userID = " + id_user + " AND c.ativo = 1";
 
+
+                    BindDataIntoRepeater(query);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                lbl_vazio.Text = ex.Message;
+            }
 
         }
 
-        
+
 
         static DataTable GetDataFromDb(string query)
         {
@@ -126,7 +168,7 @@ namespace AutoParts
             // Call the function to do paging
             HandlePaging();
         }
-       
+
         private void HandlePaging()
         {
             var dt = new DataTable();
@@ -260,7 +302,7 @@ namespace AutoParts
 
                         // Após a exclusão, você pode atualizar o Repeater para refletir as mudanças.
                         BindDataIntoRepeater(query);
-                       
+
                     }
                 }
             }
@@ -276,7 +318,7 @@ namespace AutoParts
                 decimal subtotal = quantidade * preco;
                 total += subtotal;
 
-                Label ltSubtotal = e.Item.FindControl("lbl_subtotal") as Label;           
+                Label ltSubtotal = e.Item.FindControl("lbl_subtotal") as Label;
                 ltSubtotal.Text = subtotal.ToString("C", new CultureInfo("pt-PT"));
 
                 ltTotal.Text = total.ToString();
@@ -287,7 +329,7 @@ namespace AutoParts
 
         protected void lb_atualizar_Command(object sender, CommandEventArgs e)
         {
-            
+
         }
 
         protected void Repeater1_ItemCommand(object source, RepeaterCommandEventArgs e)

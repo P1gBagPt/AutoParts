@@ -13,7 +13,7 @@ namespace AutoParts
 {
     public partial class checkout : System.Web.UI.Page
     {
- 
+
         public static int id_user;
         public static decimal total = 0;
         public static int encomenda_id = 0;
@@ -37,20 +37,32 @@ namespace AutoParts
 
                 cmd.Parameters.AddWithValue("@userId", id_user);
 
-                SqlParameter retorno = new SqlParameter("@total", SqlDbType.Float);
-                retorno.Direction = ParameterDirection.Output;
-                cmd.Parameters.Add(retorno);
+                SqlParameter totalRetorno = new SqlParameter("@total", SqlDbType.Float);
+                totalRetorno.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(totalRetorno);
 
                 myConn.Open();
                 cmd.ExecuteNonQuery();
-                
-                total = Convert.ToDecimal(cmd.Parameters["@total"].Value);
 
+                // Verifique se o valor de retorno não é DBNull antes de convertê-lo
+                total = (cmd.Parameters["@total"].Value != DBNull.Value) ? Convert.ToDecimal(cmd.Parameters["@total"].Value) : 0;
 
-                ltTotal.Text = total.ToString();
+                if (total == 0)
+                {
+                    total = 0;
+                    ltTotal.Text = total.ToString();
+                    btn_submeter.Visible = false;
+                    btn_submeter.Enabled = false;
+                }
+                else
+                {
+                    ltTotal.Text = total.ToString();
+                }
+
                 myConn.Close();
             }
-            catch (Exception ex) { 
+            catch (Exception ex)
+            {
                 ltTotal.Text = ex.Message;
             }
 
@@ -84,7 +96,6 @@ namespace AutoParts
 
                 cmd.Parameters.AddWithValue("@userId", id_user);
                 cmd.Parameters.AddWithValue("@total", total);
-                // Use DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") to format the date.
                 cmd.Parameters.AddWithValue("@data_encomenda", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 cmd.Parameters.AddWithValue("@pagamento", selectedValue);
                 cmd.Parameters.AddWithValue("@numeroEncomenda", rand_num);
@@ -94,14 +105,13 @@ namespace AutoParts
                 retorno.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(retorno);
 
-                encomenda_id = Convert.ToInt32(cmd.Parameters["@retorno"].Value);
+
 
                 myConn.Open();
                 cmd.ExecuteNonQuery();
+                encomenda_id = Convert.ToInt32(cmd.Parameters["@retorno"].Value);
 
                 myConn.Close();
-
-
 
                 try
                 {
@@ -138,13 +148,19 @@ namespace AutoParts
                     cmd2.ExecuteNonQuery();
 
                     myConn2.Close();
+
+
+
+
+                    Response.Redirect("");
+
+
+
                 }
                 catch (Exception ex)
                 {
                     lbl_erro.Text = ex.Message;
                 }
-
-
 
 
             }
@@ -155,6 +171,6 @@ namespace AutoParts
 
         }
 
-       
+
     }
 }

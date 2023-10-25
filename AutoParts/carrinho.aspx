@@ -89,6 +89,8 @@
                             <table cellspacing="0" class="table">
                                 <tbody>
                                     <tr class="order-total">
+                                        <h2 class="section-title"><asp:Label ID="lbl_vazio" runat="server" Visible="False" Enabled="False"></asp:Label></h2>
+
                                         <th>Total:</th>
                                         <td data-title="Total">
                                             <span class="price-amount amount text-primary">
