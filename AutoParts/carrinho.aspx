@@ -84,6 +84,7 @@
                         </asp:Repeater>
                     </div>
                     <div class="cart-totals">
+                        <asp:LinkButton ID="lb_esvaziar" runat="server" OnCommand="lb_esvaziar_Command" CommandName="Esvaziar" CssClass="btn btn-dark btn-medium">Esvaziar Carrinho</asp:LinkButton>
                         <h2 class="section-title">Total do carrinho</h2>
                         <div class="total-price">
                             <table cellspacing="0" class="table">

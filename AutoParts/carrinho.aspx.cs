@@ -55,12 +55,66 @@ namespace AutoParts
             if (!IsPostBack)
             {
                 total = 0;
+                try
+                {
+                    SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+
+                    SqlCommand cmd = new SqlCommand();
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "total_carrinho";
+
+                    cmd.Connection = myConn;
+
+                    cmd.Parameters.AddWithValue("@userId", id_user);
+
+                    SqlParameter totalRetorno = new SqlParameter("@total", SqlDbType.Float);
+                    totalRetorno.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(totalRetorno);
+
+                    myConn.Open();
+                    cmd.ExecuteNonQuery();
+
+                    decimal totali = (cmd.Parameters["@total"].Value != DBNull.Value) ? Convert.ToDecimal(cmd.Parameters["@total"].Value) : 0;
+
+                    if (totali == 0)
+                    {
+                        lbl_vazio.Text = "O Carrinho está vazio adiciona alguns produtos!";
+                        lbl_vazio.Enabled = true;
+                        lbl_vazio.Visible = true;
+                        lbl_vazio.ForeColor = Color.Red;
 
 
+                        ltTotal.Text = "";
+                        btn_checkout.Visible = false;
+                        btn_checkout.Enabled = false;
+
+                        lb_esvaziar.Visible = false;
+                        lb_esvaziar.Enabled = false;
+
+                    }
+                    else
+                    {
+                        total = 0;
+
+                        query = "SELECT c.id_carrinho, c.quantidade, p.*, p.stock " +
+                "FROM carrinho c " +
+                "INNER JOIN produtos p ON c.produtoID = p.id_produto " +
+                "WHERE c.userID = " + id_user + " AND c.ativo = 1";
+
+
+                        BindDataIntoRepeater(query);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    lbl_vazio.Text = ex.Message;
+                }
 
             }
 
-
+            total = 0;
             try
             {
                 SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
@@ -94,6 +148,10 @@ namespace AutoParts
                     ltTotal.Text = "";
                     btn_checkout.Visible = false;
                     btn_checkout.Enabled = false;
+
+                    lb_esvaziar.Visible = false;
+                    lb_esvaziar.Enabled = false;
+
                 }
                 else
                 {
@@ -329,6 +387,7 @@ namespace AutoParts
 
         protected void lb_atualizar_Command(object sender, CommandEventArgs e)
         {
+            
 
         }
 
@@ -354,6 +413,44 @@ namespace AutoParts
         {
             Response.Redirect("checkout.aspx");
         }
+
+        protected void lb_esvaziar_Command(object sender, CommandEventArgs e)
+        {
+            if (e.CommandName == "Esvaziar")
+            {
+                string esvaziarQuery = "DELETE FROM carrinho WHERE userID = " + id_user + " AND ativo = 1";
+
+                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ToString()))
+                {
+                    using (SqlCommand cmd = new SqlCommand(esvaziarQuery, con))
+                    {
+                        con.Open();
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        con.Close();
+
+                        if (rowsAffected > 0)
+                        {
+                            // A linha foi excluída com sucesso. Você pode adicionar qualquer lógica adicional aqui, se necessário.
+                        }
+                        else
+                        {
+                            // Não foi possível excluir a linha. Você pode tratar isso de acordo com seus requisitos.
+                        }
+
+                        // Após a exclusão, você pode atualizar o Repeater para refletir as mudanças.
+                        ltTotal.Text = "0";
+
+                        BindDataIntoRepeater(query);
+
+                        //CalcularTotal();
+
+
+                    }
+                }
+            }
+        }
+
+  
 
         protected void Repeater1_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {

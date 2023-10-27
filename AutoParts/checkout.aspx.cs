@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Globalization;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
+using System.Net.Mail;
+using System.Net;
+using System.IO;
+using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace AutoParts
 {
@@ -17,12 +15,15 @@ namespace AutoParts
         public static int id_user;
         public static decimal total = 0;
         public static int encomenda_id = 0;
+        public static string email_user = "";
 
         protected void Page_Load(object sender, EventArgs e)
         {
             Session["userId"] = 7;
+            Session["user_email"] = "marcarpremio@gmail.com";
 
             id_user = Convert.ToInt32(Session["userId"].ToString());
+            email_user = Session["user_email"].ToString();
 
             try
             {
@@ -110,7 +111,7 @@ namespace AutoParts
                 myConn.Open();
                 cmd.ExecuteNonQuery();
                 encomenda_id = Convert.ToInt32(cmd.Parameters["@retorno"].Value);
-
+                Session["EncomendaID"] = encomenda_id;
                 myConn.Close();
 
                 try
@@ -150,11 +151,27 @@ namespace AutoParts
                     myConn2.Close();
 
 
+                    try
+                    {
+                        string html = "<h1>Autoparts</h1><br/>" +
+    "<h2>Encomenda Numero " + encomenda_id + "</h2><br/><br/>" +
+    "<h3>Dados Pessoais</h3><br/>" +
+    "<p>Nome: <b>" + tb_nome.Text + "</b> | Alcunha: <b>" + tb_alcunha.Text + "</b></p><br/>" +
+    "<p>Numero de Telemóvel: <b>" + tb_telemovel.Text + " </b></p><br/><br/>" +
+    "<h3>Dados Envio</h3><br/>" +
+    "<p>Rua: <b>" + tb_rua.Text + "</b> | Apartamento: <b>" + tb_apartamento.Text + "</b></p><br/>" +
+    "<p>País: <b>" + selectedCountry + "</b> | Cidade: <b>" + tb_cidade.Text + "</b></p><br/>" +
+    "<p>Código Postal: <b>" + tb_codigo_postal.Text + "</b></p><br/><br/>" +
+    "<h3>Total da encomenda: " + total + "</h3><p> Método de Pagamento: <b>" + selectedValue + "</b></p>";
 
+                        GerarPdfEnviarEmail(html, encomenda_id, email_user);
 
-                    Response.Redirect("");
+                    }
+                    catch (Exception ex)
+                    {
+                        lbl_erro.Text = ex.Message;
 
-
+                    }
 
                 }
                 catch (Exception ex)
@@ -170,6 +187,48 @@ namespace AutoParts
             }
 
         }
+
+        public void GerarPdfEnviarEmail(string html, int encomenda_id, string email_user)
+        {
+            // Gere o PDF
+            var pdfDocument = PdfGenerator.GeneratePdf(html, PdfSharp.PageSize.A4);
+            string caminhoDaPastaPDFs = Server.MapPath("~/PDFS");
+            string nomeDoArquivoPDF = encomenda_id + ".pdf"; // Use o número da encomenda como nome do arquivo
+            string caminhoDoPDF = Path.Combine(caminhoDaPastaPDFs, nomeDoArquivoPDF);
+            pdfDocument.Save(caminhoDoPDF);
+
+            // Envie o PDF por email
+            MailMessage mail = new MailMessage();
+            SmtpClient servidor = new SmtpClient();
+
+            mail.From = new MailAddress(ConfigurationManager.AppSettings["SMTP_USER"]);
+            mail.To.Add(new MailAddress(email_user));
+            mail.Subject = "Encomenda numero " + encomenda_id;
+            mail.IsBodyHtml = true;
+
+            // Anexe o PDF ao email
+            MemoryStream pdfStream = new MemoryStream(File.ReadAllBytes(caminhoDoPDF));
+            Attachment anexo = new Attachment(pdfStream, nomeDoArquivoPDF, "application/pdf");
+            mail.Attachments.Add(anexo);
+
+            // Corpo do email
+            mail.Body = "<h1>Autoparts</h1><br/>" +
+                "<h2>Encomenda Numero " + encomenda_id + "</h2>";
+
+            servidor.Host = ConfigurationManager.AppSettings["SMTP_HOST"];
+            servidor.Port = int.Parse(ConfigurationManager.AppSettings["SMTP_PORT"]);
+
+            string smtpUtilizador = ConfigurationManager.AppSettings["SMTP_USER"];
+            string smtpPassword = ConfigurationManager.AppSettings["SMTP_PASS"];
+
+            servidor.Credentials = new NetworkCredential(smtpUtilizador, smtpPassword);
+            servidor.EnableSsl = true;
+
+            servidor.Send(mail);
+
+            Response.Redirect("donecheck.aspx");
+        }
+
 
 
     }
