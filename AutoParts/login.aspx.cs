@@ -12,6 +12,7 @@ using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ASPSnippets.FaceBookAPI;
 
 namespace AutoParts
 {
@@ -25,7 +26,18 @@ namespace AutoParts
             public string Email { get; set; }
             public string Verified_Email { get; set; }
         }
+
+        public class FaceBookUser
+        {
+            public string Id { get; set; }
+            public string Name { get; set; }
+            public string UserName { get; set; }
+            public string PictureUrl { get; set; }
+            public string Email { get; set; }
+        }
+
         public static string controlo = "";
+        public static string socialType = "";
         public static string pw_user = "";
 
 
@@ -35,21 +47,49 @@ namespace AutoParts
             GoogleConnect.ClientSecret = "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";
             GoogleConnect.RedirectUri = Request.Url.AbsoluteUri.Split('?')[0];
 
+            FaceBookConnect.API_Key = "654505023471114";
+            FaceBookConnect.API_Secret = "c96f56d41be07b887d8495d4bca4a8a7";
+
             if (!this.IsPostBack)
             {
-                if (!string.IsNullOrEmpty(Request.QueryString["code"]))
+                socialType = Session["social"] as string;
+
+                if (socialType == "google")
+                {
+                    if (!string.IsNullOrEmpty(Request.QueryString["code"]))
+                    {
+                        string code = Request.QueryString["code"];
+                        string json = GoogleConnect.Fetch("me", code);
+                        GoogleProfile profile = new JavaScriptSerializer().Deserialize<GoogleProfile>(json);
+                        Session["user_email"] = profile.Email;
+                        pw_user = profile.Id;
+                        controlo = "1";
+                    }
+                    if (Request.QueryString["error"] == "access_denied")
+                    {
+                        ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", "alert('Access denied.')", true);
+                    }
+                }
+                else if (socialType == "facebook")
                 {
                     string code = Request.QueryString["code"];
-                    string json = GoogleConnect.Fetch("me", code);
-                    GoogleProfile profile = new JavaScriptSerializer().Deserialize<GoogleProfile>(json);
-                    Session["user_email"] = profile.Email;
-                    pw_user = profile.Id;
-                    controlo = "1";
+                    if (!string.IsNullOrEmpty(code))
+                    {
+                        string data = FaceBookConnect.Fetch(code, "me?fields=id,name,email");
+                        FaceBookUser faceBookUser = new JavaScriptSerializer().Deserialize<FaceBookUser>(data);
+                        Session["user_email"] = faceBookUser.Email;
+                        pw_user = faceBookUser.Id;
+                        controlo = "1";
+                    }
+
+                    if (Request.QueryString["error"] == "access_denied")
+                    {
+                        ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('User has denied access.')", true);
+                        return;
+                    }
                 }
-                if (Request.QueryString["error"] == "access_denied")
-                {
-                    ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", "alert('Access denied.')", true);
-                }
+
+
 
 
                 if (controlo == "1")
@@ -122,12 +162,12 @@ namespace AutoParts
                             lbl_erro.Visible = true;
                             lbl_erro.Text = "Conta não ativada, para ativar carrega";
                             lbl_erro_enviar.Text = " aqui";
+
                         }
                         else
                         {
                             lbl_erro.Enabled = true;
                             lbl_erro.Visible = true;
-                            lbl_erro.Text = "Welcome";
 
                             Session["isLogged"] = "yes";
                             Session["perfil"] = respostaPerfil;
@@ -142,12 +182,14 @@ namespace AutoParts
                     }
                     else
                     {
-                        lbl_erro.Enabled = true;
-                        lbl_erro.Visible = true;
-                        lbl_erro.Text = "Essa conta não existe, regista-te!";
+                        lbl_social.Enabled = true;
+                        lbl_social.Visible = true;
+                        lbl_social.ForeColor = System.Drawing.Color.Red;
+                        lbl_social.Text = "Essa conta não existe, regista-te!";
+                        lbl_social.Attributes.Add("style", "font-size: 30px;");
+
                         Session["user_email"] = null;
                         controlo = "0";
-                        //Response.Redirect("register.aspx");
                     }
                 }
             }
@@ -155,6 +197,8 @@ namespace AutoParts
 
         public static string respostaUsername, respostaEmail, respostaPerfil;
         public static int respostaVerificado, respostaId, respostaTipoCliente;
+
+
 
         protected void lbl_erro_enviar_Click(object sender, EventArgs e)
         {
@@ -365,7 +409,33 @@ namespace AutoParts
 
         protected void btn_googleLogin_Click(object sender, EventArgs e)
         {
-            GoogleConnect.Authorize("profile", "email");
+            try
+            {
+                Session["social"] = "google";
+                GoogleConnect.Authorize("profile", "email");
+            }
+            catch (Exception ex)
+            {
+                // Log or display the error for debugging.
+                // For example, you can use a label or log it to a file.
+                lbl_erro.Text = "An error occurred: " + ex.Message;
+            }
+        }
+
+        protected void btn_facebookLogin_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Session["social"] = "facebook";
+                //GoogleConnect.Authorize("profile", "email");
+                FaceBookConnect.Authorize("email", Request.Url.AbsoluteUri.Split('?')[0]);
+            }
+            catch (Exception ex)
+            {
+                // Log or display the error for debugging.
+                // For example, you can use a label or log it to a file.
+                lbl_erro.Text = "An error occurred: " + ex.Message;
+            }
         }
     }
 }

@@ -1,19 +1,16 @@
 ﻿using ASPSnippets.GoogleAPI;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
 using System.Net.Mail;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Script.Serialization;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using static AutoParts.login;
+using ASPSnippets.FaceBookAPI;
 
 namespace AutoParts
 {
@@ -21,6 +18,7 @@ namespace AutoParts
     {
 
         public static string controlo = "";
+        public static string socialType = "";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -28,23 +26,52 @@ namespace AutoParts
             GoogleConnect.ClientSecret = "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";
             GoogleConnect.RedirectUri = Request.Url.AbsoluteUri.Split('?')[0];
 
+            FaceBookConnect.API_Key = "654505023471114";
+            FaceBookConnect.API_Secret = "c96f56d41be07b887d8495d4bca4a8a7";
 
             if (!this.IsPostBack)
             {
-                if (!string.IsNullOrEmpty(Request.QueryString["code"]))
+                socialType = Session["social"] as string;
+                
+                if(socialType == "google")
                 {
+                    if (!string.IsNullOrEmpty(Request.QueryString["code"]))
+                    {
+                        string code = Request.QueryString["code"];
+                        string json = GoogleConnect.Fetch("me", code);
+                        GoogleProfile profile = new JavaScriptSerializer().Deserialize<GoogleProfile>(json);
+                        Session["email_p"] = profile.Email;
+                        Session["name_p"] = profile.Name;
+                        Session["id_p"] = profile.Id;
+                        controlo = "1";
+                    }
+                    if (Request.QueryString["error"] == "access_denied")
+                    {
+                        ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", "alert('Access denied.')", true);
+                    }
+                }
+                else if (socialType == "facebook")
+                {
+
                     string code = Request.QueryString["code"];
-                    string json = GoogleConnect.Fetch("me", code);
-                    GoogleProfile profile = new JavaScriptSerializer().Deserialize<GoogleProfile>(json);
-                    Session["email_p"] = profile.Email;
-                    Session["name_p"] = profile.Name;
-                    Session["id_p"] = profile.Id;
-                    controlo = "1";
+                    if (!string.IsNullOrEmpty(code))
+                    {
+                        string data = FaceBookConnect.Fetch(code, "me?fields=id,name,email");
+                        FaceBookUser faceBookUser = new JavaScriptSerializer().Deserialize<FaceBookUser>(data);
+                        Session["email_p"] = faceBookUser.Email;
+                        Session["name_p"] = faceBookUser.Name;
+                        Session["id_p"] = faceBookUser.Id;
+                        controlo = "1";
+                    }
+
+                    if (Request.QueryString["error"] == "access_denied")
+                    {
+                        ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('User has denied access.')", true);
+                        return;
+                    }
                 }
-                if (Request.QueryString["error"] == "access_denied")
-                {
-                    ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", "alert('Access denied.')", true);
-                }
+
+                
 
 
                 if (controlo == "1")
@@ -60,7 +87,7 @@ namespace AutoParts
 
                     myCommand.Parameters.AddWithValue("@nome", Session["name_p"]);
                     myCommand.Parameters.AddWithValue("@email", Session["email_p"]);
-                    myCommand.Parameters.AddWithValue("@username", "asdasd");
+                    myCommand.Parameters.AddWithValue("@username", GenerateName(7));
                     myCommand.Parameters.AddWithValue("@password", EncryptString(Session["id_p"].ToString()));
                     myCommand.Parameters.AddWithValue("@tipocliente", 1);
 
@@ -80,22 +107,26 @@ namespace AutoParts
 
                     if (respostaSP == 0)
                     {
-                        lbl_erro.Enabled = true;
-                        lbl_erro.Visible = true;
-                        lbl_erro.Text = "Este utilizador já existe por favor tenta outro";
+                        lbl_social.Enabled = true;
+                        lbl_social.Visible = true;
+                        lbl_social.Text = "Este utilizador já existe por favor tenta outro";
+                        lbl_social.ForeColor = System.Drawing.Color.Red;
+                        lbl_social.Attributes.Add("style", "font-size: 23px;");
+
                     }
                     else
                     {
-                        lbl_erro.Enabled = true;
-                        lbl_erro.Visible = true;
-                        lbl_erro.ForeColor = System.Drawing.Color.Green;
-                        lbl_erro.Text = "User Successfully Created!";
+                        lbl_social.Enabled = true;
+                        lbl_social.Visible = true;
+                        lbl_social.ForeColor = System.Drawing.Color.Green;
+                        lbl_social.Text = "User Successfully Created!";
+                        lbl_social.Attributes.Add("style", "font-size: 40px;");
                     }
                 }
             }
         }
 
-        /*public static string GenerateName(int len)
+        public static string GenerateName(int len)
         {
             Random r = new Random();
             string[] consonants = { "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "l", "n", "p", "q", "r", "s", "sh", "zh", "t", "v", "w", "x" };
@@ -113,7 +144,7 @@ namespace AutoParts
             }
 
             return Name;
-        }*/
+        }
 
         protected void submit_Click(object sender, EventArgs e)
         {
@@ -321,7 +352,25 @@ namespace AutoParts
         {
             try
             {
+                Session["social"] = "google";
                 GoogleConnect.Authorize("profile", "email");
+            }
+            catch (Exception ex)
+            {
+                // Log or display the error for debugging.
+                // For example, you can use a label or log it to a file.
+                lbl_erro.Text = "An error occurred: " + ex.Message;
+            }
+        }
+
+        protected void btn_facebookRegisto_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Session["social"] = "facebook";
+                //GoogleConnect.Authorize("profile", "email");
+                FaceBookConnect.Authorize("email", Request.Url.AbsoluteUri.Split('?')[0]);
+                //, Request.Url.AbsoluteUri.Split('?')[0]
             }
             catch (Exception ex)
             {
