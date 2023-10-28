@@ -1,26 +1,33 @@
-﻿using System;
+﻿using ASPSnippets.GoogleAPI;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
-using System.Text.RegularExpressions;
-using System.Security.Cryptography;
+using System.Linq;
 using System.Net.Mail;
 using System.Net;
-using ASPSnippets.GoogleAPI;
-using static AutoParts.login;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Script.Serialization;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using static AutoParts.login;
 
 namespace AutoParts
 {
-    public partial class register : System.Web.UI.Page
+    public partial class registerWmaster : System.Web.UI.Page
     {
+
         public static string controlo = "";
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            GoogleConnect.ClientId = "972730968305-pnle29kt7bicu76ru49nujjnnv2g4npt.apps.googleusercontent.com";
-            GoogleConnect.ClientSecret = "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";
+            GoogleConnect.ClientId = "972730968305-o0llll7q9ot2i4ohrgpd382l6bc89v5k.apps.googleusercontent.com";
+            GoogleConnect.ClientSecret = "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";
             GoogleConnect.RedirectUri = Request.Url.AbsoluteUri.Split('?')[0];
+
 
             if (!this.IsPostBack)
             {
@@ -73,10 +80,14 @@ namespace AutoParts
 
                     if (respostaSP == 0)
                     {
-                        lbl_erro.Text = "This user already exists, please choose another.";
+                        lbl_erro.Enabled = true;
+                        lbl_erro.Visible = true;
+                        lbl_erro.Text = "Este utilizador já existe por favor tenta outro";
                     }
                     else
                     {
+                        lbl_erro.Enabled = true;
+                        lbl_erro.Visible = true;
                         lbl_erro.ForeColor = System.Drawing.Color.Green;
                         lbl_erro.Text = "User Successfully Created!";
                     }
@@ -222,19 +233,19 @@ namespace AutoParts
                                 servidor.Credentials = new NetworkCredential(smtpUtilizador, smtpPassword);
                                 servidor.EnableSsl = true;
 
-                                servidor.Send(mail);                             
+                                servidor.Send(mail);
                                 lbl_erro.Text = "Verifica a tua caixa de email para verificares a conta!";
                                 lbl_erro.ForeColor = System.Drawing.Color.Green;
                                 lbl_erro.Font.Size = 25;
                                 Session["ativacao_enviada_acesso"] = "yes";
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 lbl_erro.Text = ex.ToString();
                             }
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         lbl_erro.Text = ex.ToString();
 

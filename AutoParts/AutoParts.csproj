@@ -657,8 +657,6 @@
     <Content Include="produto.aspx" />
     <Content Include="recuperar_password.aspx" />
     <Content Include="register.aspx" />
-    <Content Include="registerWmaster.aspx" />
-    <Content Include="teste.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -835,20 +833,6 @@
     </Compile>
     <Compile Include="register.aspx.designer.cs">
       <DependentUpon>register.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="registerWmaster.aspx.cs">
-      <DependentUpon>registerWmaster.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="registerWmaster.aspx.designer.cs">
-      <DependentUpon>registerWmaster.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="teste.aspx.cs">
-      <DependentUpon>teste.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="teste.aspx.designer.cs">
-      <DependentUpon>teste.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

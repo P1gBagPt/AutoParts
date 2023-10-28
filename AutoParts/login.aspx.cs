@@ -1,16 +1,17 @@
-﻿using System;
+﻿using ASPSnippets.GoogleAPI;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
 using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Security.Cryptography;
 using System.Net.Mail;
 using System.Net;
-
+using System.Security.Cryptography;
+using System.Web;
+using System.Web.Script.Serialization;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace AutoParts
 {
@@ -24,9 +25,132 @@ namespace AutoParts
             public string Email { get; set; }
             public string Verified_Email { get; set; }
         }
+        public static string controlo = "";
+        public static string pw_user = "";
+
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            GoogleConnect.ClientId = "972730968305-o0llll7q9ot2i4ohrgpd382l6bc89v5k.apps.googleusercontent.com";
+            GoogleConnect.ClientSecret = "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";
+            GoogleConnect.RedirectUri = Request.Url.AbsoluteUri.Split('?')[0];
 
+            if (!this.IsPostBack)
+            {
+                if (!string.IsNullOrEmpty(Request.QueryString["code"]))
+                {
+                    string code = Request.QueryString["code"];
+                    string json = GoogleConnect.Fetch("me", code);
+                    GoogleProfile profile = new JavaScriptSerializer().Deserialize<GoogleProfile>(json);
+                    Session["user_email"] = profile.Email;
+                    pw_user = profile.Id;
+                    controlo = "1";
+                }
+                if (Request.QueryString["error"] == "access_denied")
+                {
+                    ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", "alert('Access denied.')", true);
+                }
+
+
+                if (controlo == "1")
+                {
+                    SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+
+                    SqlCommand cmd = new SqlCommand();
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "login_user";
+
+                    cmd.Connection = myConn;
+
+                    cmd.Parameters.AddWithValue("@email_user", Session["user_email"].ToString());
+                    cmd.Parameters.AddWithValue("@password", EncryptString(pw_user));
+
+                    SqlParameter retorno = new SqlParameter("@retorno", SqlDbType.Int);
+                    retorno.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(retorno);
+
+                    SqlParameter retorno_username = new SqlParameter("@retorno_username", SqlDbType.VarChar, 20);
+                    retorno_username.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(retorno_username);
+
+                    SqlParameter retorno_email = new SqlParameter("@retorno_email", SqlDbType.VarChar, 255);
+                    retorno_email.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(retorno_email);
+
+                    SqlParameter retorno_verificado = new SqlParameter("@retorno_verificado", SqlDbType.Bit);
+                    retorno_verificado.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(retorno_verificado);
+
+                    SqlParameter retorno_id = new SqlParameter("@retorno_id", SqlDbType.Int);
+                    retorno_id.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(retorno_id);
+
+                    SqlParameter retorno_tipoCliente = new SqlParameter("@retorno_tipoCliente", SqlDbType.Int);
+                    retorno_tipoCliente.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(retorno_tipoCliente);
+
+                    SqlParameter retorno_perfil = new SqlParameter("@retorno_perfil", SqlDbType.VarChar, 10);
+                    retorno_perfil.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(retorno_perfil);
+
+                    myConn.Open();
+                    cmd.ExecuteNonQuery();
+
+                    int respostaSP = Convert.ToInt32(cmd.Parameters["@retorno"].Value);
+
+                    if (respostaSP == 0)
+                    {
+                        respostaUsername = cmd.Parameters["@retorno_username"].Value.ToString();
+                        respostaEmail = cmd.Parameters["@retorno_email"].Value.ToString();
+                        respostaVerificado = Convert.ToInt32(cmd.Parameters["@retorno_verificado"].Value);
+                        respostaId = Convert.ToInt32(cmd.Parameters["@retorno_id"].Value);
+                        respostaTipoCliente = Convert.ToInt32(cmd.Parameters["@retorno_tipoCliente"].Value);
+                        respostaPerfil = cmd.Parameters["@retorno_perfil"].Value.ToString();
+                    }
+
+
+                    myConn.Close();
+
+                    string respostaemail = email_username.Text;
+
+                    if (respostaSP == 0)
+                    {
+                        if (respostaVerificado == 0)
+                        {
+                            lbl_erro.Enabled = true;
+                            lbl_erro.Visible = true;
+                            lbl_erro.Text = "Conta não ativada, para ativar carrega";
+                            lbl_erro_enviar.Text = " aqui";
+                        }
+                        else
+                        {
+                            lbl_erro.Enabled = true;
+                            lbl_erro.Visible = true;
+                            lbl_erro.Text = "Welcome";
+
+                            Session["isLogged"] = "yes";
+                            Session["perfil"] = respostaPerfil;
+                            Session["userId"] = respostaId;
+                            Session["username"] = respostaUsername;
+                            Session["user_email"] = respostaEmail;
+                            Session["tipo_cliente"] = respostaTipoCliente;
+
+                            Response.Redirect("index.aspx");
+                        }
+
+                    }
+                    else
+                    {
+                        lbl_erro.Enabled = true;
+                        lbl_erro.Visible = true;
+                        lbl_erro.Text = "Essa conta não existe, regista-te!";
+                        Session["user_email"] = null;
+                        controlo = "0";
+                        //Response.Redirect("register.aspx");
+                    }
+                }
+            }
         }
 
         public static string respostaUsername, respostaEmail, respostaPerfil;
@@ -239,6 +363,9 @@ namespace AutoParts
             return enc;
         }
 
-
+        protected void btn_googleLogin_Click(object sender, EventArgs e)
+        {
+            GoogleConnect.Authorize("profile", "email");
+        }
     }
 }

@@ -11,17 +11,8 @@ namespace AutoParts
 {
 
 
-    public partial class register
+    public partial class registerWmaster
     {
-
-        /// <summary>
-        /// form1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
         /// tb_name control.
@@ -139,19 +130,5 @@ namespace AutoParts
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btn_googleLogin;
-
-        /// <summary>
-        /// Master property.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated property.
-        /// </remarks>
-        public new AutoParts.main_master Master
-        {
-            get
-            {
-                return ((AutoParts.main_master)(base.Master));
-            }
-        }
     }
 }
