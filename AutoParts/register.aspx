@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="assets/css/formsRLAPass.css" rel="stylesheet" />
 
+
+
     <style>
         .home a {
             text-decoration: none;
@@ -32,6 +34,42 @@
                 text-decoration: none;
                 color: black;
             }
+
+            .google-btn {
+    margin-left: 42%;
+    width: 184px;
+    height: 42px;
+    background-color: #4285f4;
+    border-radius: 2px;
+    box-shadow: 0 3px 4px 0 rgba(0,0,0,.25);
+}
+
+.google-icon-wrapper {
+    position: absolute;
+    margin-top: 1px;
+    margin-left: 1px;
+    width: 40px;
+    height: 40px;
+    border-radius: 2px;
+    background-color: #fff;
+}
+
+.google-icon {
+    position: absolute;
+    margin-top: 11px;
+    margin-left: 11px;
+    width: 18px;
+    height: 18px;
+}
+
+
+&:hover {
+    box-shadow: 0 0 6px #4285f4;
+}
+
+&:active {
+    background: #1669F2;
+}
     </style>
 </head>
 <body>
@@ -78,6 +116,14 @@
                             <div class="form-group">
                                 <asp:Button name="submit" ID="submit" class="form-submit" runat="server" Text="Registar" OnClick="submit_Click" Style="background: red; cursor: pointer; color: white;" />
                             </div>
+                            <div class="form-group">
+                                <div class="google-btn">
+                                    <div class="google-icon-wrapper">
+                                        <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
+                                    </div>
+                                    <asp:LinkButton ID="btn_googleLogin" runat="server" OnClick="btn_googleLogin_Click" CausesValidation="False"> <p class="btn-text"><b>Register with google</b></p> </asp:LinkButton>
+                                </div>
+                            </div>
                         </div>
                         <p class="loginhere">
                             Já tens uma conta ? <a href="login.aspx" class="loginhere-link">Login</a>
@@ -87,6 +133,10 @@
             </section>
 
         </div>
+
+        <script src="assets/js/jquery-1.11.0.min.js"></script>
+        <script src="assets/js/plugins.js"></script>
+        <script src="assets/js/script.js"></script>
     </form>
 </body>
 </html>

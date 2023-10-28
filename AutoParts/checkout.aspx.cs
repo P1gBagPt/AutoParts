@@ -5,6 +5,11 @@ using System.Data.SqlClient;
 using System.Net.Mail;
 using System.Net;
 using System.IO;
+using System.Collections.Generic;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using iTextSharp.text.html.simpleparser;
+using AngleSharp.Html.Parser;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace AutoParts
@@ -153,19 +158,33 @@ namespace AutoParts
 
                     try
                     {
-                        string html = "<h1>Autoparts</h1><br/>" +
-    "<h2>Encomenda Numero " + encomenda_id + "</h2><br/><br/>" +
-    "<h3>Dados Pessoais</h3><br/>" +
-    "<p>Nome: <b>" + tb_nome.Text + "</b> | Alcunha: <b>" + tb_alcunha.Text + "</b></p><br/>" +
-    "<p>Numero de Telemóvel: <b>" + tb_telemovel.Text + " </b></p><br/><br/>" +
-    "<h3>Dados Envio</h3><br/>" +
-    "<p>Rua: <b>" + tb_rua.Text + "</b> | Apartamento: <b>" + tb_apartamento.Text + "</b></p><br/>" +
-    "<p>País: <b>" + selectedCountry + "</b> | Cidade: <b>" + tb_cidade.Text + "</b></p><br/>" +
-    "<p>Código Postal: <b>" + tb_codigo_postal.Text + "</b></p><br/><br/>" +
-    "<h3>Total da encomenda: " + total + "</h3><p> Método de Pagamento: <b>" + selectedValue + "</b></p>";
+                        string html = "<h1 style=\"font-family: Arial, sans-serif;\">Autoparts</h1><br/>" +
+                            "<h2>Encomenda Numero " + encomenda_id + "</h2><br/><br/>" +
+                            "<h3>Dados Pessoais</h3><br/>" +
+                            string.Format("<p>Nome: <b>{0}</b> | Alcunha: <b>{1}</b></p><br/>", tb_nome.Text, tb_alcunha.Text) +
+                            string.Format("<p>Numero de Telemóvel: <b>{0}</b></p><br/><br/>", tb_telemovel.Text) +
+                            "<h3>Dados Envio</h3><br/>" +
+                            string.Format("<p>Rua: <b>{0}</b> | Apartamento: <b>{1}</b></p><br/>", tb_rua.Text, tb_apartamento.Text) +
+                            string.Format("<p>País: <b>{0}</b> | Cidade: <b>{1}</b></p><br/>", selectedCountry, tb_cidade.Text) +
+                            string.Format("<p>Código Postal: <b>{0}</b></p><br/><br/>", tb_codigo_postal.Text) +
+                            "<h3>Produtos no Carrinho</h3><br/>";
+
+                        List<ProdutoCarrinho> produtosNoCarrinho = ObterProdutosDoCarrinho(encomenda_id, id_user);
+
+                        foreach (var produto in produtosNoCarrinho)
+                        {
+                            html += $"<img src=\"data:{produto.ContentTypeImagem};base64,{Convert.ToBase64String(produto.Imagem)}\" style=\"max-width: 100px; margin-right: 10px; border: 1px solid black;\" />";
+
+                            html += string.Format("<p>Nome do Produto: <b>{0}</b> | Marca: <b>{1}</b> | Número de Artigo: <b>{2}</b> <br/> Quantidade: <b>{3}</b> | Preço Total: <b>€{4:F2}</b></p>",
+                                produto.NomeProduto, produto.Marca, produto.NumeroArtigo, produto.Quantidade, produto.PrecoTotal);
+
+                            html += "<hr style=\"border: 1px solid #ddd;\"/>";
+
+                        }
+
+                        html += string.Format("<h3>Total da encomenda: €{0:F2}</h3><p> Método de Pagamento: <b>{1}</b></p>", total, selectedValue);
 
                         GerarPdfEnviarEmail(html, encomenda_id, email_user);
-
                     }
                     catch (Exception ex)
                     {
@@ -187,6 +206,78 @@ namespace AutoParts
             }
 
         }
+
+        public List<ProdutoCarrinho> ObterProdutosDoCarrinho(int encomenda_id, int id_user)
+        {
+            List<ProdutoCarrinho> produtos = new List<ProdutoCarrinho>();
+
+            string connectionString = ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ToString();
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+
+                string query = @"
+    SELECT
+    p.nome AS NomeProduto,
+    p.preco AS PrecoArtigo,
+    c.quantidade AS Quantidade,
+    m.nome AS Marca,
+    p.numero_artigo AS NumeroArtigo,
+    c.quantidade * p.preco AS PrecoTotal,
+    p.imagem AS ImagemProduto,
+    p.contenttype AS ContentTypeImagem
+FROM carrinho c
+INNER JOIN produtos p ON c.produtoID = p.id_produto
+INNER JOIN marcas m ON p.marca = m.id_marca
+WHERE c.userID = @id_user
+    AND c.encomenda = @encomenda_id";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@encomenda_id", encomenda_id);
+                    cmd.Parameters.AddWithValue("@id_user", id_user);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ProdutoCarrinho produto = new ProdutoCarrinho
+                            {
+                                NomeProduto = reader["NomeProduto"].ToString(),
+                                PrecoArtigo = Convert.ToDecimal(reader["PrecoArtigo"]),
+                                Quantidade = Convert.ToInt32(reader["Quantidade"]),
+                                Marca = reader["Marca"].ToString(),
+                                NumeroArtigo = reader["NumeroArtigo"].ToString(),
+                                PrecoTotal = Convert.ToDecimal(reader["PrecoTotal"]),
+                                Imagem = reader["ImagemProduto"] as byte[],
+                                ContentTypeImagem = reader["ContentTypeImagem"].ToString()
+                            };
+                            produtos.Add(produto);
+                        }
+                    }
+                }
+
+                con.Close();
+            }
+
+            return produtos;
+        }
+
+        public class ProdutoCarrinho
+        {
+            public string NomeProduto { get; set; }
+            public decimal PrecoArtigo { get; set; }
+            public int Quantidade { get; set; }
+            public string Marca { get; set; }
+            public string NumeroArtigo { get; set; }
+            public decimal PrecoTotal { get; set; }
+            public byte[] Imagem { get; set; }
+            public string ContentTypeImagem { get; set; }
+        }
+
+
+
 
         public void GerarPdfEnviarEmail(string html, int encomenda_id, string email_user)
         {
@@ -225,7 +316,7 @@ namespace AutoParts
             servidor.EnableSsl = true;
 
             servidor.Send(mail);
-
+            Session["EncomendaID"] = encomenda_id;
             Response.Redirect("donecheck.aspx");
         }
 

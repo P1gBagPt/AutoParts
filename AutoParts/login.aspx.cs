@@ -11,10 +11,19 @@ using System.Security.Cryptography;
 using System.Net.Mail;
 using System.Net;
 
+
 namespace AutoParts
 {
     public partial class login : System.Web.UI.Page
     {
+        public class GoogleProfile
+        {
+            public string Id { get; set; }
+            public string Name { get; set; }
+            public string Picture { get; set; }
+            public string Email { get; set; }
+            public string Verified_Email { get; set; }
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
 

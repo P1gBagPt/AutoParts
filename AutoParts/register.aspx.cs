@@ -1,25 +1,108 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Security.Cryptography;
 using System.Net.Mail;
 using System.Net;
+using ASPSnippets.GoogleAPI;
+using static AutoParts.login;
+using System.Web.Script.Serialization;
 
 namespace AutoParts
 {
     public partial class register : System.Web.UI.Page
     {
+        public static string controlo = "";
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            GoogleConnect.ClientId = "972730968305-pnle29kt7bicu76ru49nujjnnv2g4npt.apps.googleusercontent.com";
+            GoogleConnect.ClientSecret = "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";
+            GoogleConnect.RedirectUri = Request.Url.AbsoluteUri.Split('?')[0];
 
+            if (!this.IsPostBack)
+            {
+                if (!string.IsNullOrEmpty(Request.QueryString["code"]))
+                {
+                    string code = Request.QueryString["code"];
+                    string json = GoogleConnect.Fetch("me", code);
+                    GoogleProfile profile = new JavaScriptSerializer().Deserialize<GoogleProfile>(json);
+                    Session["email_p"] = profile.Email;
+                    Session["name_p"] = profile.Name;
+                    Session["id_p"] = profile.Id;
+                    controlo = "1";
+                }
+                if (Request.QueryString["error"] == "access_denied")
+                {
+                    ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", "alert('Access denied.')", true);
+                }
+
+
+                if (controlo == "1")
+                {
+                    //string username = GenerateName(7);
+                    SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+
+                    SqlCommand myCommand = new SqlCommand();
+                    myCommand.CommandType = CommandType.StoredProcedure;
+                    myCommand.CommandText = "registar_user_google";
+
+                    myCommand.Connection = myConn;
+
+                    myCommand.Parameters.AddWithValue("@nome", Session["name_p"]);
+                    myCommand.Parameters.AddWithValue("@email", Session["email_p"]);
+                    myCommand.Parameters.AddWithValue("@username", "asdasd");
+                    myCommand.Parameters.AddWithValue("@password", EncryptString(Session["id_p"].ToString()));
+                    myCommand.Parameters.AddWithValue("@tipocliente", 1);
+
+
+                    SqlParameter valor = new SqlParameter();
+                    valor.ParameterName = "@retorno";
+                    valor.Direction = ParameterDirection.Output;
+                    valor.SqlDbType = SqlDbType.Int;
+                    myCommand.Parameters.Add(valor);
+
+                    myConn.Open();
+                    myCommand.ExecuteNonQuery();
+
+                    int respostaSP = Convert.ToInt32(myCommand.Parameters["@retorno"].Value);
+
+                    myConn.Close();
+
+                    if (respostaSP == 0)
+                    {
+                        lbl_erro.Text = "This user already exists, please choose another.";
+                    }
+                    else
+                    {
+                        lbl_erro.ForeColor = System.Drawing.Color.Green;
+                        lbl_erro.Text = "User Successfully Created!";
+                    }
+                }
+            }
         }
+
+        /*public static string GenerateName(int len)
+        {
+            Random r = new Random();
+            string[] consonants = { "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "l", "n", "p", "q", "r", "s", "sh", "zh", "t", "v", "w", "x" };
+            string[] vowels = { "a", "e", "i", "o", "u", "ae", "y" };
+            string Name = "";
+            Name += consonants[r.Next(consonants.Length)].ToUpper();
+            Name += vowels[r.Next(vowels.Length)];
+            int b = 2; //b tells how many times a new letter has been added. It's 2 right now because the first two letters are already in the name.
+            while (b < len)
+            {
+                Name += consonants[r.Next(consonants.Length)];
+                b++;
+                Name += vowels[r.Next(vowels.Length)];
+                b++;
+            }
+
+            return Name;
+        }*/
 
         protected void submit_Click(object sender, EventArgs e)
         {
@@ -223,6 +306,18 @@ namespace AutoParts
             return enc;
         }
 
-
+        protected void btn_googleLogin_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                GoogleConnect.Authorize("profile", "email");
+            }
+            catch (Exception ex)
+            {
+                // Log or display the error for debugging.
+                // For example, you can use a label or log it to a file.
+                lbl_erro.Text = "An error occurred: " + ex.Message;
+            }
+        }
     }
 }
