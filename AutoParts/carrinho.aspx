@@ -15,10 +15,9 @@
                                 <h3 class="cart-title col-lg-3 text-center">Quantidade</h3>
                                 <h3 class="cart-title col-lg-3 text-center">Subtotal</h3>
                                 <h3 class="cart-title col-lg-3 text-center">Remover</h3>
-                                <h3 class="cart-title col-lg-3 text-center">Atualizar</h3>
                             </div>
                         </div>
-                        <asp:Repeater ID="Repeater1" runat="server" OnItemDataBound="Repeater1_ItemDataBound1" OnItemCommand="Repeater1_ItemCommand">
+                        <asp:Repeater ID="Repeater1" runat="server" OnItemDataBound="Repeater1_ItemDataBound1">
                             <ItemTemplate>
                                 <div class="cart-item border-bottom padding-small">
 
@@ -48,11 +47,14 @@
                                             <div class="row d-flex">
                                                 <div class="col-md-6">
                                                     <div class="qty-number d-flex align-items-center justify-content-start">
-                                                        <asp:TextBox ID="tb_quantidade" runat="server" TextMode="Number" CssClass="spin-number-output" Value='<%# Eval("quantidade") %>' max='<%# Eval("stock") %>' min="1" onkeydown="return event.keyCode === 38 || event.keyCode === 40;"></asp:TextBox>
-                                                    </div>
+                                                        <asp:LinkButton ID="lb_diminuir" runat="server" class="decrement-button" CommandName="Diminuir" CommandArgument='<%# Eval("id_produto") + "," + Eval("id_carrinho") %>' OnCommand="lb_diminuir_Command">-</asp:LinkButton>
+                                                        <asp:TextBox ID="tb_quantidade" runat="server" TextMode="Number" CssClass="spin-number-output" Value='<%# Eval("quantidade") %>' Enabled="False"></asp:TextBox>
+                                                        <asp:LinkButton ID="lb_increase" runat="server" class="increment-button" CommandName="Aumentar" CommandArgument='<%# Eval("id_produto") + "," + Eval("id_carrinho") %>' OnCommand="lb_increase_Command">+</asp:LinkButton>
 
-                                                </div>
+                                                    </div>
+>
                                                 <div class="col-md-4">
+                                                </div
                                                     <div class="total-price">
                                                         <span class="money text-primary">
                                                             <asp:Label ID="lbl_subtotal" runat="server"></asp:Label>
@@ -67,15 +69,7 @@
 
                                             </div>
                                         </div>
-                                        <div class="col-lg-1 col-md-2">
-                                            <div class="cart-remove">
-                                                <asp:LinkButton ID="lb_atualizar" runat="server" CommandArgument='<%# Eval("id_carrinho") %>' CommandName="Atualizar">
-                                                    <i class="icon icon-close"></i>
-                                                </asp:LinkButton>
-
-
-
-                                            </div>
+                                  
                                         </div>
                                     </div>
 

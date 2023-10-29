@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -52,6 +53,8 @@ namespace AutoParts
             id_user = Convert.ToInt32(Session["userId"].ToString());
 
             total = 0;
+
+
             if (!IsPostBack)
             {
                 total = 0;
@@ -385,30 +388,6 @@ namespace AutoParts
         }
 
 
-        protected void lb_atualizar_Command(object sender, CommandEventArgs e)
-        {
-            
-
-        }
-
-        protected void Repeater1_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            if (e.CommandName == "Atualizar")
-            {
-                if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
-                {
-                    // Find the TextBox within the current item
-                    TextBox tb_quantidade = e.Item.FindControl("tb_quantidade") as TextBox;
-
-                    if (tb_quantidade != null)
-                    {
-                        string textBoxText = tb_quantidade.Text;
-                        // Use textBoxText as needed
-                    }
-                }
-            }
-        }
-
         protected void btn_checkout_Click(object sender, EventArgs e)
         {
             Response.Redirect("checkout.aspx");
@@ -450,7 +429,103 @@ namespace AutoParts
             }
         }
 
-  
+        protected void lb_diminuir_Command(object sender, CommandEventArgs e)
+        {
+
+        }
+
+        protected void lb_increase_Command(object sender, CommandEventArgs e)
+        {
+            int idProduto = 0;
+            int idCarrinho = 0;
+
+            string argument = e.CommandArgument.ToString();
+            string[] arguments = argument.Split(',');
+
+            if (arguments.Length == 2)
+            {
+                idProduto = Convert.ToInt32(arguments[0]);
+                idCarrinho = Convert.ToInt32(arguments[1]);
+            }
+            try
+            {
+                SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+
+                SqlCommand cmd = new SqlCommand();
+
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "stock_info_produto";
+
+                cmd.Connection = myConn;
+
+                cmd.Parameters.AddWithValue("@produtoID", idProduto);
+                cmd.Parameters.AddWithValue("@carrinhoID", idCarrinho);
+
+                SqlParameter retorno = new SqlParameter("@retorno_stock", SqlDbType.Int);
+                retorno.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(retorno);
+
+                SqlParameter retornoQuantidade = new SqlParameter("@retorno_quantidade", SqlDbType.Int);
+                retornoQuantidade.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(retornoQuantidade);
+
+                myConn.Open();
+                cmd.ExecuteNonQuery();
+
+                int respostaSP = Convert.ToInt32(cmd.Parameters["@retorno_stock"].Value);
+                int respostaQuantidades = Convert.ToInt32(cmd.Parameters["@retorno_quantidade"].Value);
+
+                myConn.Close();
+
+
+
+                if(respostaQuantidades + 1 < respostaSP)
+                {
+                try
+                {
+                    SqlConnection myConn2 = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+
+                    SqlCommand cmd2 = new SqlCommand();
+
+                    cmd2.CommandType = CommandType.StoredProcedure;
+                    cmd2.CommandText = "alterar_quantidade";
+
+                    cmd2.Connection = myConn2;
+
+                    cmd2.Parameters.AddWithValue("@carrinhoID", idCarrinho);
+
+                    myConn2.Open();
+                    cmd2.ExecuteNonQuery();
+                    myConn2.Close();
+
+                        BindDataIntoRepeater(query);
+
+
+
+                    }
+                    catch (Exception ex)
+                {
+                    lbl_vazio.Enabled = true;
+                    lbl_vazio.Visible = true;
+                    lbl_vazio.Text = ex.Message;
+                }
+                }
+                else
+                {
+
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                lbl_vazio.Enabled = true;
+                lbl_vazio.Visible = true;
+                lbl_vazio.Text = ex.Message;
+            }
+
+        }
 
         protected void Repeater1_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
