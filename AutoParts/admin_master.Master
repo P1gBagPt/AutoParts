@@ -4,30 +4,30 @@
 
 <html>
 <head runat="server">
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Dashboard - Autoparts Daniel Cunha</title>
+    <title>Dashboard - Autoparts Daniel Cunha</title>
 
-  <!-- Favicons -->
-  <link href="admin_assets/img/favicon.png" rel="icon">
-  <link href="admin_assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <!-- Favicons -->
+    <link href="admin_assets/img/favicon.png" rel="icon">
+    <link href="admin_assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
-  <!-- Vendor CSS Files -->
-  <link href="admin_assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="admin_assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="admin_assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="admin_assets/vendor/quill/quill.snow.css" rel="stylesheet">
-  <link href="admin_assets/vendor/quill/quill.bubble.css" rel="stylesheet">
-  <link href="admin_assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="admin_assets/vendor/simple-datatables/style.css" rel="stylesheet">
+    <!-- Vendor CSS Files -->
+    <link href="admin_assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="admin_assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="admin_assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="admin_assets/vendor/quill/quill.snow.css" rel="stylesheet">
+    <link href="admin_assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+    <link href="admin_assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="admin_assets/vendor/simple-datatables/style.css" rel="stylesheet">
 
-  <!-- Template Main CSS File -->
-  <link href="admin_assets/css/style.css" rel="stylesheet">
+    <!-- Template Main CSS File -->
+    <link href="admin_assets/css/style.css" rel="stylesheet">
 
 
 
@@ -38,165 +38,206 @@
 <body>
     <form id="form1" runat="server">
         <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
-          <!-- ======= Header ======= -->
-  <header id="header" class="header fixed-top d-flex align-items-center">
+        <!-- ======= Header ======= -->
+        <header id="header" class="header fixed-top d-flex align-items-center">
 
-    <div class="d-flex align-items-center justify-content-between">
-      <a href="index_admin.aspx" class="logo d-flex align-items-center">
-        <img src="assets/img/logo.png" alt="">
-        <span class="d-none d-lg-block">Autoparts</span>
-      </a>
-      <i class="bi bi-list toggle-sidebar-btn"></i>
-    </div><!-- End Logo -->
-
-    
-
-    <nav class="header-nav ms-auto">
-      <ul class="d-flex align-items-center">
-
-        
-
-
-        
-
-        <li class="nav-item dropdown pe-3">
-
-          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <!-- img src="assets/img/profile-img.jpg" alt="" class="rounded-circle">-->
-            <span class="d-none d-md-block dropdown-toggle ps-2">Daniel</span>
-          </a><!-- End Profile Iamge Icon -->
-
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
-              <h6>Daniel</h6>
-              <span>Administrador</span>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                <i class="bi bi-person"></i>
-                <span>Perfil</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-          
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Sign Out</span>
-              </a>
-            </li>
-
-          </ul><!-- End Profile Dropdown Items -->
-        </li><!-- End Profile Nav -->
-
-      </ul>
-    </nav><!-- End Icons Navigation -->
-
-  </header><!-- End Header -->
-
-  <!-- ======= Sidebar ======= -->
-  <aside id="sidebar" class="sidebar">
-
-    <ul class="sidebar-nav" id="sidebar-nav">
-
-      <li class="nav-item">
-        <a class="nav-link " href="index_admin.aspx">
-          <i class="bi bi-grid"></i>
-          <span>Dashboard</span>
-        </a>
-      </li><!-- End Dashboard Nav -->
-
-      <!-- USERS --><!-- USERS --><!-- USERS --><!-- USERS --><!-- USERS -->
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="bo_users.aspx">
-          <i class="bi bi-people"></i><span>Clientes</span>
-        </a>
-
-      <!-- USCATEGORIAS --><!-- USCATEGORIAS --><!-- USCATEGORIAS --><!-- USCATEGORIAS --><!-- USCATEGORIAS -->
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#categorias-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-layout-text-window-reverse"></i><span>Categorias</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>     
-          <ul id="categorias-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-  <li>
-    <a href="bo_categorias.aspx">
-      <i class="bi bi-circle"></i><span>Dashboard Categorias</span>
-    </a>
-  </li>
-
-</ul>
-      </li><!-- End Tables Nav -->
-       
-        <!-- PRODUTOS --><!-- PRODUTOS --><!-- PRODUTOS --><!-- PRODUTOS --><!-- PRODUTOS --><!-- PRODUTOS -->
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-box-seam"></i><span>Produtos</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="bo_produtos.aspx">
-              <i class="bi bi-circle"></i><span>Dashboard Produtos</span>
-            </a>
-          </li>
-
-        </ul>
-      </li><!-- End Forms Nav -->
-
-         <li class="nav-item">
-   <a class="nav-link collapsed" data-bs-target="#marcas-nav" data-bs-toggle="collapse" href="#">
-     <i class="bi bi-substack"></i><span>Marcas</span><i class="bi bi-chevron-down ms-auto"></i>
-   </a>
-   <ul id="marcas-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-     <li>
-       <a href="bo_marcas.aspx">
-         <i class="bi bi-circle"></i><span>Dashboard Marcas</span>
-       </a>
-     </li>
-
-   </ul>
- </li><!-- End Forms Nav -->
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="index_admin.aspx" class="logo d-flex align-items-center">
+                    <img src="assets/img/logo.png" alt="">
+                    <span class="d-none d-lg-block">Autoparts</span>
+                </a>
+                <i class="bi bi-list toggle-sidebar-btn"></i>
+            </div>
+            <!-- End Logo -->
 
 
 
-      
+            <nav class="header-nav ms-auto">
+                <ul class="d-flex align-items-center">
 
-      
+                    <li class="nav-item dropdown pe-3">
 
-    </ul>
+                        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                            <!-- img src="assets/img/profile-img.jpg" alt="" class="rounded-circle">-->
+                            <span class="d-none d-md-block dropdown-toggle ps-2">Daniel</span>
+                        </a>
+                        <!-- End Profile Iamge Icon -->
 
-  </aside><!-- End Sidebar-->
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                            <li class="dropdown-header">
+                                <h6>Daniel</h6>
+                                <span>Administrador</span>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                                    <i class="bi bi-person"></i>
+                                    <span>Perfil</span>
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
 
 
 
-            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-            </asp:ContentPlaceHolder>
-        
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    <span>Sign Out</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                        <!-- End Profile Dropdown Items -->
+                    </li>
+                    <!-- End Profile Nav -->
+
+                </ul>
+            </nav>
+            <!-- End Icons Navigation -->
+
+        </header>
+        <!-- End Header -->
+
+        <!-- ======= Sidebar ======= -->
+        <aside id="sidebar" class="sidebar">
+
+            <ul class="sidebar-nav" id="sidebar-nav">
+
+                <li class="nav-item">
+                    <a class="nav-link " href="index_admin.aspx">
+                        <i class="bi bi-grid"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <!-- End Dashboard Nav -->
+
+                <!-- USERS -->
+                <!-- USERS -->
+                <!-- USERS -->
+                <!-- USERS -->
+                <!-- USERS -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="bo_users.aspx">
+                        <i class="bi bi-people"></i><span>Clientes</span>
+                    </a>
+
+                    <!-- USCATEGORIAS -->
+                    <!-- USCATEGORIAS -->
+                    <!-- USCATEGORIAS -->
+                    <!-- USCATEGORIAS -->
+                    <!-- USCATEGORIAS -->
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" data-bs-target="#categorias-nav" data-bs-toggle="collapse" href="#">
+                            <i class="bi bi-layout-text-window-reverse"></i><span>Categorias</span><i class="bi bi-chevron-down ms-auto"></i>
+                        </a>
+                        <ul id="categorias-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                            <li>
+                                <a href="bo_categorias.aspx">
+                                    <i class="bi bi-circle"></i><span>Dashboard Categorias</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                <!-- End Tables Nav -->
+
+                <!-- PRODUTOS -->
+                <!-- PRODUTOS -->
+                <!-- PRODUTOS -->
+                <!-- PRODUTOS -->
+                <!-- PRODUTOS -->
+                <!-- PRODUTOS -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-box-seam"></i><span>Produtos</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="bo_produtos.aspx">
+                                <i class="bi bi-circle"></i><span>Dashboard Produtos</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+                <!-- End Forms Nav -->
+
+                <!-- MARCAS -->
+                <!-- MARCAS -->
+                <!-- MARCAS -->
+                <!-- MARCAS -->
+                <!-- MARCAS -->
+                <!-- MARCAS -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#marcas-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-substack"></i><span>Marcas</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="marcas-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="bo_marcas.aspx">
+                                <i class="bi bi-circle"></i><span>Dashboard Marcas</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+                <!-- End Forms Nav -->
+
+                <!-- MARCAS -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#encomendas-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-substack"></i><span>Encomendas</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="encomendas-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="bo_encomendas.aspx">
+                                <i class="bi bi-circle"></i><span>Dashboard Encomendas</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+                <!-- End Forms Nav -->
+
+
+
+
+
+
+
+            </ul>
+
+        </aside>
+        <!-- End Sidebar-->
+
+
+
+        <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+        </asp:ContentPlaceHolder>
+
 
         <!-- ======= Footer ======= -->
-  
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-  <!-- Vendor JS Files -->
-  <script src="admin_assets/vendor/apexcharts/apexcharts.min.js"></script>
-  <script src="admin_assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="admin_assets/vendor/chart.js/chart.umd.js"></script>
-  <script src="admin_assets/vendor/echarts/echarts.min.js"></script>
-  <script src="admin_assets/vendor/quill/quill.min.js"></script>
-  <script src="admin_assets/vendor/simple-datatables/simple-datatables.js"></script>
-  <script src="admin_assets/vendor/tinymce/tinymce.min.js"></script>
-  <script src="admin_assets/vendor/php-email-form/validate.js"></script>
+        <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-  <!-- Template Main JS File -->
-  <script src="admin_assets/js/main.js"></script>
+        <!-- Vendor JS Files -->
+        <script src="admin_assets/vendor/apexcharts/apexcharts.min.js"></script>
+        <script src="admin_assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="admin_assets/vendor/chart.js/chart.umd.js"></script>
+        <script src="admin_assets/vendor/echarts/echarts.min.js"></script>
+        <script src="admin_assets/vendor/quill/quill.min.js"></script>
+        <script src="admin_assets/vendor/simple-datatables/simple-datatables.js"></script>
+        <script src="admin_assets/vendor/tinymce/tinymce.min.js"></script>
+        <script src="admin_assets/vendor/php-email-form/validate.js"></script>
+
+        <!-- Template Main JS File -->
+        <script src="admin_assets/js/main.js"></script>
 
     </form>
 </body>

@@ -649,6 +649,7 @@
     <Content Include="bo_categorias.aspx" />
     <Content Include="bo_editar_produto.aspx" />
     <Content Include="bo_editar_user.aspx" />
+    <Content Include="bo_encomendas.aspx" />
     <Content Include="bo_marcas.aspx" />
     <Content Include="bo_produtos.aspx" />
     <Content Include="bo_users.aspx" />
@@ -669,9 +670,6 @@
     <Compile Include="admin_master.Master.cs">
       <DependentUpon>admin_master.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="admin_master.Master.designer.cs">
-      <DependentUpon>admin_master.Master</DependentUpon>
     </Compile>
     <Compile Include="alterar_password.aspx.cs">
       <DependentUpon>alterar_password.aspx</DependentUpon>
@@ -733,6 +731,13 @@
     </Compile>
     <Compile Include="bo_editar_user.aspx.designer.cs">
       <DependentUpon>bo_editar_user.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="bo_encomendas.aspx.cs">
+      <DependentUpon>bo_encomendas.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="bo_encomendas.aspx.designer.cs">
+      <DependentUpon>bo_encomendas.aspx</DependentUpon>
     </Compile>
     <Compile Include="bo_marcas.aspx.cs">
       <DependentUpon>bo_marcas.aspx</DependentUpon>
