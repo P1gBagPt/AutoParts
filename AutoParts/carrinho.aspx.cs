@@ -92,13 +92,12 @@ namespace AutoParts
                         btn_checkout.Visible = false;
                         btn_checkout.Enabled = false;
 
-                        lb_esvaziar.Visible = false;
-                        lb_esvaziar.Enabled = false;
+                        btn_esvaziar.Visible = false;
+                        btn_esvaziar.Enabled = false;
 
                     }
                     else
                     {
-                        total = 0;
 
                         query = "SELECT c.id_carrinho, c.quantidade, p.*, p.stock " +
                 "FROM carrinho c " +
@@ -117,7 +116,6 @@ namespace AutoParts
 
             }
 
-            total = 0;
             try
             {
                 SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
@@ -152,8 +150,8 @@ namespace AutoParts
                     btn_checkout.Visible = false;
                     btn_checkout.Enabled = false;
 
-                    lb_esvaziar.Visible = false;
-                    lb_esvaziar.Enabled = false;
+                    btn_esvaziar.Visible = false;
+                    btn_esvaziar.Enabled = false;
 
                 }
                 else
@@ -206,6 +204,7 @@ namespace AutoParts
 
         private void BindDataIntoRepeater(string query)
         {
+            total = 0;
             var dt = GetDataFromDb(query);
             _pgsource.DataSource = dt.DefaultView;
             _pgsource.AllowPaging = true;
@@ -351,21 +350,70 @@ namespace AutoParts
                         con.Open();
                         int rowsAffected = cmd.ExecuteNonQuery();
                         con.Close();
-
-                        if (rowsAffected > 0)
-                        {
-                            // A linha foi excluída com sucesso. Você pode adicionar qualquer lógica adicional aqui, se necessário.
-                        }
-                        else
-                        {
-                            // Não foi possível excluir a linha. Você pode tratar isso de acordo com seus requisitos.
-                        }
-
-                        // Após a exclusão, você pode atualizar o Repeater para refletir as mudanças.
-                        BindDataIntoRepeater(query);
-
                     }
                 }
+
+                try
+                {
+                    SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+
+                    SqlCommand cmd = new SqlCommand();
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "total_carrinho";
+
+                    cmd.Connection = myConn;
+
+                    cmd.Parameters.AddWithValue("@userId", id_user);
+
+                    SqlParameter totalRetorno = new SqlParameter("@total", SqlDbType.Float);
+                    totalRetorno.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(totalRetorno);
+
+                    myConn.Open();
+                    cmd.ExecuteNonQuery();
+                    myConn.Close();
+                    decimal totali = (cmd.Parameters["@total"].Value != DBNull.Value) ? Convert.ToDecimal(cmd.Parameters["@total"].Value) : 0;
+
+                    if (totali == 0)
+                    {
+                        lbl_vazio.Text = "O Carrinho está vazio adiciona alguns produtos!";
+                        lbl_vazio.Enabled = true;
+                        lbl_vazio.Visible = true;
+                        lbl_vazio.ForeColor = Color.Red;
+
+
+                        ltTotal.Text = "";
+                        btn_checkout.Visible = false;
+                        btn_checkout.Enabled = false;
+
+                        btn_esvaziar.Visible = false;
+                        btn_esvaziar.Enabled = false;
+
+                    }
+                    else
+                    {
+
+
+                        query = "SELECT c.id_carrinho, c.quantidade, p.*, p.stock " +
+                "FROM carrinho c " +
+                "INNER JOIN produtos p ON c.produtoID = p.id_produto " +
+                "WHERE c.userID = " + id_user + " AND c.ativo = 1";
+
+
+                        BindDataIntoRepeater(query);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    lbl_vazio.Text = ex.Message;
+                }
+
+
+
+                BindDataIntoRepeater(query);
+
             }
         }
 
@@ -393,9 +441,11 @@ namespace AutoParts
             Response.Redirect("checkout.aspx");
         }
 
-        protected void lb_esvaziar_Command(object sender, CommandEventArgs e)
+      
+
+        protected void btn_esvaziar_Click(object sender, EventArgs e)
         {
-            if (e.CommandName == "Esvaziar")
+            try
             {
                 string esvaziarQuery = "DELETE FROM carrinho WHERE userID = " + id_user + " AND ativo = 1";
 
@@ -407,122 +457,279 @@ namespace AutoParts
                         int rowsAffected = cmd.ExecuteNonQuery();
                         con.Close();
 
-                        if (rowsAffected > 0)
-                        {
-                            // A linha foi excluída com sucesso. Você pode adicionar qualquer lógica adicional aqui, se necessário.
-                        }
-                        else
-                        {
-                            // Não foi possível excluir a linha. Você pode tratar isso de acordo com seus requisitos.
-                        }
-
-                        // Após a exclusão, você pode atualizar o Repeater para refletir as mudanças.
                         ltTotal.Text = "0";
 
-                        BindDataIntoRepeater(query);
-
-                        //CalcularTotal();
-
+                        Response.Redirect("carrinho.aspx");
 
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+
             }
         }
 
         protected void lb_diminuir_Command(object sender, CommandEventArgs e)
         {
-
-        }
-
-        protected void lb_increase_Command(object sender, CommandEventArgs e)
-        {
-            int idProduto = 0;
-            int idCarrinho = 0;
-
-            string argument = e.CommandArgument.ToString();
-            string[] arguments = argument.Split(',');
-
-            if (arguments.Length == 2)
+            if (e.CommandName == "Diminuir")
             {
-                idProduto = Convert.ToInt32(arguments[0]);
-                idCarrinho = Convert.ToInt32(arguments[1]);
-            }
-            try
-            {
-                SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+                int idProduto = 0;
+                int idCarrinho = 0;
 
-                SqlCommand cmd = new SqlCommand();
+                string argument = e.CommandArgument.ToString();
+                string[] arguments = argument.Split(',');
 
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = "stock_info_produto";
-
-                cmd.Connection = myConn;
-
-                cmd.Parameters.AddWithValue("@produtoID", idProduto);
-                cmd.Parameters.AddWithValue("@carrinhoID", idCarrinho);
-
-                SqlParameter retorno = new SqlParameter("@retorno_stock", SqlDbType.Int);
-                retorno.Direction = ParameterDirection.Output;
-                cmd.Parameters.Add(retorno);
-
-                SqlParameter retornoQuantidade = new SqlParameter("@retorno_quantidade", SqlDbType.Int);
-                retornoQuantidade.Direction = ParameterDirection.Output;
-                cmd.Parameters.Add(retornoQuantidade);
-
-                myConn.Open();
-                cmd.ExecuteNonQuery();
-
-                int respostaSP = Convert.ToInt32(cmd.Parameters["@retorno_stock"].Value);
-                int respostaQuantidades = Convert.ToInt32(cmd.Parameters["@retorno_quantidade"].Value);
-
-                myConn.Close();
-
-
-
-                if(respostaQuantidades + 1 < respostaSP)
+                if (arguments.Length == 2)
                 {
+                    idProduto = Convert.ToInt32(arguments[0]);
+                    idCarrinho = Convert.ToInt32(arguments[1]);
+                }
                 try
                 {
-                    SqlConnection myConn2 = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+                    SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
 
-                    SqlCommand cmd2 = new SqlCommand();
+                    SqlCommand cmd = new SqlCommand();
 
-                    cmd2.CommandType = CommandType.StoredProcedure;
-                    cmd2.CommandText = "alterar_quantidade";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "stock_info_produto";
 
-                    cmd2.Connection = myConn2;
+                    cmd.Connection = myConn;
 
-                    cmd2.Parameters.AddWithValue("@carrinhoID", idCarrinho);
+                    cmd.Parameters.AddWithValue("@produtoID", idProduto);
+                    cmd.Parameters.AddWithValue("@carrinhoID", idCarrinho);
 
-                    myConn2.Open();
-                    cmd2.ExecuteNonQuery();
-                    myConn2.Close();
+                    SqlParameter retorno = new SqlParameter("@retorno_stock", SqlDbType.Int);
+                    retorno.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(retorno);
 
-                        BindDataIntoRepeater(query);
+                    SqlParameter retornoQuantidade = new SqlParameter("@retorno_quantidade", SqlDbType.Int);
+                    retornoQuantidade.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(retornoQuantidade);
+
+                    myConn.Open();
+                    cmd.ExecuteNonQuery();
+
+                    int respostaSP = Convert.ToInt32(cmd.Parameters["@retorno_stock"].Value);
+                    int respostaQuantidades = Convert.ToInt32(cmd.Parameters["@retorno_quantidade"].Value);
+
+                    myConn.Close();
+
+                    if(respostaQuantidades - 1 == 0)
+                    {
+                        try
+                        {
+                            // Construa a consulta SQL DELETE com base no ID do carrinho
+                            string deleteQuery = "DELETE FROM carrinho WHERE id_carrinho = @IdCarrinho AND userID = " + id_user;
+
+                            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ToString()))
+                            {
+                                using (SqlCommand cmd3 = new SqlCommand(deleteQuery, con))
+                                {
+                                    cmd3.Parameters.AddWithValue("@IdCarrinho", idCarrinho);
+
+                                    con.Open();
+                                    int rowsAffected = cmd3.ExecuteNonQuery();
+                                    con.Close();
+                                    try
+                                    {
+                                        SqlConnection myConn2 = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+
+                                        SqlCommand cmd4 = new SqlCommand();
+
+                                        cmd4.CommandType = CommandType.StoredProcedure;
+                                        cmd4.CommandText = "total_carrinho";
+
+                                        cmd4.Connection = myConn2;
+
+                                        cmd4.Parameters.AddWithValue("@userId", id_user);
+
+                                        SqlParameter totalRetorno = new SqlParameter("@total", SqlDbType.Float);
+                                        totalRetorno.Direction = ParameterDirection.Output;
+                                        cmd4.Parameters.Add(totalRetorno);
+
+                                        myConn2.Open();
+                                        cmd4.ExecuteNonQuery();
+                                        myConn2.Close();
+
+                                        decimal totali = (cmd4.Parameters["@total"].Value != DBNull.Value) ? Convert.ToDecimal(cmd4.Parameters["@total"].Value) : 0;
+
+                                        if (totali == 0)
+                                        {
+                                            lbl_vazio.Text = "O Carrinho está vazio adiciona alguns produtos!";
+                                            lbl_vazio.Enabled = true;
+                                            lbl_vazio.Visible = true;
+                                            lbl_vazio.ForeColor = Color.Red;
+
+
+                                            ltTotal.Text = "";
+                                            btn_checkout.Visible = false;
+                                            btn_checkout.Enabled = false;
+
+                                            btn_esvaziar.Visible = false;
+                                            btn_esvaziar.Enabled = false;
+
+                                        }
+                                        else
+                                        {
+
+
+                                            query = "SELECT c.id_carrinho, c.quantidade, p.*, p.stock " +
+                                    "FROM carrinho c " +
+                                    "INNER JOIN produtos p ON c.produtoID = p.id_produto " +
+                                    "WHERE c.userID = " + id_user + " AND c.ativo = 1";
+
+
+                                            BindDataIntoRepeater(query);
+                                        }
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        lbl_vazio.Enabled = true;
+                                        lbl_vazio.Visible = true;
+                                        lbl_vazio.Text = ex.Message;
+                                    }
 
 
 
+                                    BindDataIntoRepeater(query);
+
+                                }
+                            }
+                            
+                        }
+                        catch (Exception ex)
+                        {
+                            lbl_vazio.Enabled = true;
+                            lbl_vazio.Visible = true;
+                            lbl_vazio.Text = ex.Message;
+                        }
                     }
-                    catch (Exception ex)
+                    else if(respostaQuantidades - 1 <= respostaSP)
+                    {
+                        try
+                        {
+                            SqlConnection myConn2 = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+
+                            SqlCommand cmd2 = new SqlCommand();
+
+                            cmd2.CommandType = CommandType.StoredProcedure;
+                            cmd2.CommandText = "alterar_quantidade";
+
+                            cmd2.Connection = myConn2;
+
+                            cmd2.Parameters.AddWithValue("@carrinhoID", idCarrinho);
+                            cmd2.Parameters.AddWithValue("@quantidades", respostaQuantidades - 1);
+
+
+                            myConn2.Open();
+                            cmd2.ExecuteNonQuery();
+                            myConn2.Close();
+
+                            BindDataIntoRepeater(query);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            lbl_vazio.Enabled = true;
+                            lbl_vazio.Visible = true;
+                            lbl_vazio.Text = ex.Message;
+                        }
+                    }                                  
+                }
+                catch (Exception ex)
                 {
                     lbl_vazio.Enabled = true;
                     lbl_vazio.Visible = true;
                     lbl_vazio.Text = ex.Message;
                 }
-                }
-                else
-                {
-
-                }
-
-
-
             }
-            catch (Exception ex)
+        }
+
+        protected void lb_increase_Command(object sender, CommandEventArgs e)
+        {
+            if (e.CommandName == "Aumentar")
             {
-                lbl_vazio.Enabled = true;
-                lbl_vazio.Visible = true;
-                lbl_vazio.Text = ex.Message;
+                int idProduto = 0;
+                int idCarrinho = 0;
+
+                string argument = e.CommandArgument.ToString();
+                string[] arguments = argument.Split(',');
+
+                if (arguments.Length == 2)
+                {
+                    idProduto = Convert.ToInt32(arguments[0]);
+                    idCarrinho = Convert.ToInt32(arguments[1]);
+                }
+                try
+                {
+                    SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+
+                    SqlCommand cmd = new SqlCommand();
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "stock_info_produto";
+
+                    cmd.Connection = myConn;
+
+                    cmd.Parameters.AddWithValue("@produtoID", idProduto);
+                    cmd.Parameters.AddWithValue("@carrinhoID", idCarrinho);
+
+                    SqlParameter retorno = new SqlParameter("@retorno_stock", SqlDbType.Int);
+                    retorno.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(retorno);
+
+                    SqlParameter retornoQuantidade = new SqlParameter("@retorno_quantidade", SqlDbType.Int);
+                    retornoQuantidade.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(retornoQuantidade);
+
+                    myConn.Open();
+                    cmd.ExecuteNonQuery();
+
+                    int respostaSP = Convert.ToInt32(cmd.Parameters["@retorno_stock"].Value);
+                    int respostaQuantidades = Convert.ToInt32(cmd.Parameters["@retorno_quantidade"].Value);
+
+                    myConn.Close();
+
+                    if (respostaQuantidades + 1 <= respostaSP)
+                    {
+                        try
+                        {
+                            SqlConnection myConn2 = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+
+                            SqlCommand cmd2 = new SqlCommand();
+
+                            cmd2.CommandType = CommandType.StoredProcedure;
+                            cmd2.CommandText = "alterar_quantidade";
+
+                            cmd2.Connection = myConn2;
+
+                            cmd2.Parameters.AddWithValue("@carrinhoID", idCarrinho);
+                            cmd2.Parameters.AddWithValue("@quantidades", respostaQuantidades + 1);
+
+
+                            myConn2.Open();
+                            cmd2.ExecuteNonQuery();
+                            myConn2.Close();
+
+                            BindDataIntoRepeater(query);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            lbl_vazio.Enabled = true;
+                            lbl_vazio.Visible = true;
+                            lbl_vazio.Text = ex.Message;
+                        }
+                    }                 
+                }
+                catch (Exception ex)
+                {
+                    lbl_vazio.Enabled = true;
+                    lbl_vazio.Visible = true;
+                    lbl_vazio.Text = ex.Message;
+                }
             }
 
         }

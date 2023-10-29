@@ -3,7 +3,6 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-
     <section class="shopify-cart padding-large">
         <div class="container">
             <asp:UpdatePanel ID="UpdatePanel1" runat="server">
@@ -11,16 +10,14 @@
                     <div class="cart-table">
                         <div class="cart-header border-bottom ">
                             <div class="row d-flex">
-                                <h3 class="cart-title col-lg-3 text-center">Produto</h3>
-                                <h3 class="cart-title col-lg-3 text-center">Quantidade</h3>
-                                <h3 class="cart-title col-lg-3 text-center">Subtotal</h3>
-                                <h3 class="cart-title col-lg-3 text-center">Remover</h3>
+                                <h3 class="cart-title col-lg-4">Produto</h3>
+                                <h3 class="cart-title col-lg-3">Quantidade</h3>
+                                <h3 class="cart-title col-lg-4">Subtotal</h3>
                             </div>
                         </div>
                         <asp:Repeater ID="Repeater1" runat="server" OnItemDataBound="Repeater1_ItemDataBound1">
                             <ItemTemplate>
                                 <div class="cart-item border-bottom padding-small">
-
                                     <div class="row">
                                         <div class="col-lg-4 col-md-3">
                                             <div class="row cart-info d-flex flex-wrap">
@@ -47,17 +44,17 @@
                                             <div class="row d-flex">
                                                 <div class="col-md-6">
                                                     <div class="qty-number d-flex align-items-center justify-content-start">
-                                                        <asp:LinkButton ID="lb_diminuir" runat="server" class="decrement-button" CommandName="Diminuir" CommandArgument='<%# Eval("id_produto") + "," + Eval("id_carrinho") %>' OnCommand="lb_diminuir_Command">-</asp:LinkButton>
-                                                        <asp:TextBox ID="tb_quantidade" runat="server" TextMode="Number" CssClass="spin-number-output" Value='<%# Eval("quantidade") %>' Enabled="False"></asp:TextBox>
-                                                        <asp:LinkButton ID="lb_increase" runat="server" class="increment-button" CommandName="Aumentar" CommandArgument='<%# Eval("id_produto") + "," + Eval("id_carrinho") %>' OnCommand="lb_increase_Command">+</asp:LinkButton>
+                                                        <asp:LinkButton ID="lb_diminuir" runat="server" class="decrement-button" CommandName="Diminuir" CommandArgument='<%# Eval("id_produto") + "," + Eval("id_carrinho") %>' OnCommand="lb_diminuir_Command" CssClass="decrement-button">-</asp:LinkButton>
+                                                        <asp:TextBox ID="tb_quantidade" runat="server" TextMode="SingleLine" CssClass="spin-number-output" Value='<%# Eval("quantidade") %>' Enabled="False"></asp:TextBox>
+                                                        <asp:LinkButton ID="lb_increase" runat="server" CommandName="Aumentar" CommandArgument='<%# Eval("id_produto") + "," + Eval("id_carrinho") %>' OnCommand="lb_increase_Command" CssClass="increment-button">+</asp:LinkButton>
 
                                                     </div>
->
+                                                </div>
                                                 <div class="col-md-4">
-                                                </div
                                                     <div class="total-price">
                                                         <span class="money text-primary">
-                                                            <asp:Label ID="lbl_subtotal" runat="server"></asp:Label>
+                                                            <span class="money text-primary">
+                                                                <asp:Label ID="lbl_subtotal" runat="server"></asp:Label></span>
                                                         </span>
                                                     </div>
                                                 </div>
@@ -66,26 +63,21 @@
                                         <div class="col-lg-1 col-md-2">
                                             <div class="cart-remove">
                                                 <asp:LinkButton ID="lb_remover" runat="server" CommandArgument='<%# Eval("id_carrinho") %>' OnCommand="lb_remover_Command" CommandName="Remover"><i class="icon icon-close"></i></asp:LinkButton>
-
                                             </div>
                                         </div>
-                                  
-                                        </div>
                                     </div>
-
                                 </div>
                             </ItemTemplate>
                         </asp:Repeater>
                     </div>
                     <div class="cart-totals">
-                        <asp:LinkButton ID="lb_esvaziar" runat="server" OnCommand="lb_esvaziar_Command" CommandName="Esvaziar" CssClass="btn btn-dark btn-medium">Esvaziar Carrinho</asp:LinkButton>
                         <h2 class="section-title">Total do carrinho</h2>
                         <div class="total-price">
                             <table cellspacing="0" class="table">
                                 <tbody>
                                     <tr class="order-total">
-                                        <h2 class="section-title"><asp:Label ID="lbl_vazio" runat="server" Visible="False" Enabled="False"></asp:Label></h2>
-
+                                        <h2 class="section-title">
+                                            <asp:Label ID="lbl_vazio" runat="server" Visible="False" Enabled="False"></asp:Label></h2>
                                         <th>Total:</th>
                                         <td data-title="Total">
                                             <span class="price-amount amount text-primary">
@@ -102,17 +94,15 @@
                         </div>
                         <div class="button-wrap">
                             <a>
-                                <asp:Button ID="btn_continuar_comprar" runat="server" class="btn btn-dark btn-medium" Text="Continuar a comprar" OnClick="btn_continuar_comprar_Click" /></a>
-                            <a>
-                                <asp:Button ID="btn_checkout" runat="server" class="btn btn-dark btn-medium" Text="Proceder para o Checkout" OnClick="btn_checkout_Click"/></a>
+                                <asp:Button ID="btn_esvaziar" runat="server" class="btn btn-dark btn-medium" Text="Esvaziar Carrinho" OnClick="btn_esvaziar_Click" />
+                                <a>
+                                    <asp:Button ID="btn_continuar_comprar" runat="server" class="btn btn-dark btn-medium" Text="Continuar a comprar" OnClick="btn_continuar_comprar_Click" /></a>
+                                <a>
+                                    <asp:Button ID="btn_checkout" runat="server" class="btn btn-dark btn-medium" Text="Proceder para o Checkout" OnClick="btn_checkout_Click" /></a>
                         </div>
                     </div>
                 </ContentTemplate>
             </asp:UpdatePanel>
         </div>
     </section>
-
-
-
-
 </asp:Content>
