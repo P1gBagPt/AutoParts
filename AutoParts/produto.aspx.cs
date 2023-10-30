@@ -251,6 +251,14 @@ namespace AutoParts
 
                 myConn.Close();
 
+                if(resposta == 3)
+                {
+                    lbl_erro.Enabled = true;
+                    lbl_erro.Visible = true;
+                    lbl_erro.Text = "A quantidade do carrinho é o stock existente!";
+                    lbl_erro.ForeColor = System.Drawing.Color.Red;
+                }
+
                 if (resposta == 2)
                 {
                     lbl_erro.Enabled = true;

@@ -74,13 +74,8 @@
                                                             <div class="item-price text-primary"><%# Eval("preco")%> €</div>
                                                         </div>
                                                     </div>
-
-
                                                 </ItemTemplate>
                                             </asp:Repeater>
-
-
-
                                         </div>
                                     </div>
                                 </div>

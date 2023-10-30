@@ -1,9 +1,23 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/main_master.Master" AutoEventWireup="true" CodeBehind="index.aspx.cs" Inherits="AutoParts.index" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    <style>
+        .product-title {
+    height: 60px; /* Defina a altura desejada */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item-price {
+    margin-top: 10px; /* Adiciona um espaçamento entre o título e o preço */
+}
+
+    </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <section id="billboard" class="overflow-hidden">
+
 
         <button class="button-prev">
             <i class="icon icon-chevron-left"></i>
@@ -59,125 +73,31 @@
             </div>
             <div class="swiper product-swiper overflow-hidden">
                 <div class="swiper-wrapper">
+                    
                     <asp:Repeater ID="Repeater1" runat="server">
                         <ItemTemplate>
                             <div class="swiper-slide">
                                 <div class="product-item">
                                     <div class="image-holder">
-                                        <img src="assets/images/product-item1.jpg" alt="Books" class="product-image">
+                                        <a href='<%# "produto.aspx?productId=" + Eval("id_produto") %>'>
+                                            <asp:Image ID="img_produtoquatroMarcas" runat="server" CssClass="product-image" style="width: 350px; height: 350px;" ImageUrl='<%# GetBase64Image(Eval("imagem"), Eval("contenttype")) %>'/>
+                                        </a>
                                     </div>
-                                    <div class="cart-concern">
-                                        <div class="cart-button d-flex justify-content-between align-items-center">
-                                            <button type="button" class="btn-wrap cart-link d-flex align-items-center">
-                                                add to cart <i class="icon icon-arrow-io"></i>
-                                            </button>
-                                            <button type="button" class="view-btn tooltip
-                        d-flex">
-                                                <i class="icon icon-screen-full"></i>
-                                                <span class="tooltip-text">Quick view</span>
-                                            </button>
-                                            <button type="button" class="wishlist-btn">
-                                                <i class="icon icon-heart"></i>
-                                            </button>
-                                        </div>
-                                    </div>
+                                   
                                     <div class="product-detail">
                                         <h3 class="product-title">
-                                            <a href="single-product.html">Full sleeve cover shirt</a>
+                                            <a href='<%# "produto.aspx?productId=" + Eval("id_produto") %>'><%# Eval("nome") %></a>
                                         </h3>
-                                        <span class="item-price text-primary">$40.00</span>
+                                        <span class="item-price text-primary"><%# Eval("preco") %> €</span>
+                                        <br />
+                                        <asp:LinkButton ID="lb_adicionar_quatroMarcas" runat="server" CssClass="btn btn-outline-dark" CommandName="AdicionarCarTopMarcas" CommandArgument='<%# Eval("id_produto") %>' OnCommand="lb_adicionar_quatroMarcas_Command">Adicionar ao carrinho</asp:LinkButton>
                                     </div>
                                 </div>
                             </div>
                         </ItemTemplate>
-                    </asp:Repeater>
-                    <div class="swiper-slide">
-                        <div class="product-item">
-                            <div class="image-holder">
-                                <img src="assets/images/product-item2.jpg" alt="Books" class="product-image">
-                            </div>
-                            <div class="cart-concern">
-                                <div class="cart-button d-flex justify-content-between align-items-center">
-                                    <button type="button" class="btn-wrap cart-link d-flex align-items-center">
-                                        add to cart <i class="icon icon-arrow-io"></i>
-                                    </button>
-                                    <button type="button" class="view-btn tooltip
-                        d-flex">
-                                        <i class="icon icon-screen-full"></i>
-                                        <span class="tooltip-text">Quick view</span>
-                                    </button>
-                                    <button type="button" class="wishlist-btn">
-                                        <i class="icon icon-heart"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="product-detail">
-                                <h3 class="product-title">
-                                    <a href="single-product.html">Volunteer Half blue</a>
-                                </h3>
-                                <span class="item-price text-primary">$38.00</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="product-item">
-                            <div class="image-holder">
-                                <img src="assets/images/product-item3.jpg" alt="Books" class="product-image">
-                            </div>
-                            <div class="cart-concern">
-                                <div class="cart-button d-flex justify-content-between align-items-center">
-                                    <button type="button" class="btn-wrap cart-link d-flex align-items-center">
-                                        add to cart <i class="icon icon-arrow-io"></i>
-                                    </button>
-                                    <button type="button" class="view-btn tooltip
-                        d-flex">
-                                        <i class="icon icon-screen-full"></i>
-                                        <span class="tooltip-text">Quick view</span>
-                                    </button>
-                                    <button type="button" class="wishlist-btn">
-                                        <i class="icon icon-heart"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="product-detail">
-                                <h3 class="product-title">
-                                    <a href="single-product.html">Double yellow shirt</a>
-                                </h3>
-                                <span class="item-price text-primary">$44.00</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="product-item">
-                            <div class="image-holder">
-                                <img src="assets/images/product-item4.jpg" alt="Books" class="product-image">
-                            </div>
-                            <div class="cart-concern">
-                                <div class="cart-button d-flex justify-content-between align-items-center">
-                                    <button type="button" class="btn-wrap cart-link d-flex align-items-center">
-                                        add to cart <i class="icon icon-arrow-io"></i>
-                                    </button>
-                                    <button type="button" class="view-btn tooltip
-                        d-flex">
-                                        <i class="icon icon-screen-full"></i>
-                                        <span class="tooltip-text">Quick view</span>
-                                    </button>
-                                    <button type="button" class="wishlist-btn">
-                                        <i class="icon icon-heart"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="product-detail">
-                                <h3 class="product-title">
-                                    <a href="single-product.html">Long belly grey pant</a>
-                                </h3>
-                                <span class="item-price text-primary">$33.00</span>
-                            </div>
-                        </div>
-                    </div>
+                    </asp:Repeater>                   
                 </div>
             </div>
-            <div class="swiper-pagination"></div>
         </div>
     </section>
 
@@ -1545,6 +1465,7 @@
                 </article>
             </div>
         </div>
+
     </section>
 
 
