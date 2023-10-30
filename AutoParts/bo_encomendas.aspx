@@ -24,54 +24,44 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Encomendas</h5>
-                            <asp:UpdatePanel ID="UpdatePanel1" runat="server">
-                                <ContentTemplate>
-
-
-                                    <asp:Repeater ID="Repeater1" runat="server" OnItemCommand="Repeater1_ItemCommand">
-                                        <ItemTemplate>
-                                            <div class="accordion" id="accordionExample">
-                                                <div class="accordion-item">
-                                                    <h2 class="accordion-header" id='<%# "heading" + Container.ItemIndex %>'>
-                                                        <asp:Button runat="server" ID="btn_accordion" CssClass="accordion-button"
-    data-bs-toggle="collapse"
-    data-bs-target='<%# "#collapse" + Container.ItemIndex %>'
-    aria-expanded="true"
-    aria-controls='<%# "collapse" + Container.ItemIndex %>'
-    CommandName="ShowProducts" CommandArgument='<%# Eval("id_encomenda") %>'
-    Text='<%# "Order #" + Eval("id_encomenda") + " - Codigo: " + Eval("codigo") %>' />
 
 
 
+                            <asp:Repeater ID="Repeater1" runat="server" OnItemDataBound="Repeater1_ItemDataBound">
+                                <ItemTemplate>
+                                    <div class="accordion" id="accordionExample">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id='<%# "heading" + Container.ItemIndex %>'>
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target='<%# "#collapse" + Container.ItemIndex %>' aria-expanded="false" aria-controls='<%# "collapse" + Container.ItemIndex %>'>
+                                                    Order #<%# Eval("id_encomenda") %> - Codigo: <%# Eval("codigo") %>
+                                                </button>
 
-                                                    </h2>
-                                                    <div id='<%# "collapse" + Container.ItemIndex %>' class="accordion-collapse collapse" aria-labelledby='<%# "heading" + Container.ItemIndex %>' data-bs-parent="#accordionExample">
-                                                        <div class="accordion-body">
-                                                            <p>ID: <%# Eval("id_encomenda") %></p>
-                                                            <p>Data: <%# Eval("data_encomenda", "{0:MM/dd/yyyy}") %></p>
-                                                            <p>Total: <%# Eval("total", "{0:C}") %></p>
-                                                            <p>Status: <%# Eval("status") %></p>
-                                                            <p>Método de Pagamento: <%# Eval("metodoPagamento") %></p>
+                                            </h2>
+                                            <div id='<%# "collapse" + Container.ItemIndex %>' class="accordion-collapse collapse" aria-labelledby='<%# "heading" + Container.ItemIndex %>' data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    <p>ID: <%# Eval("id_encomenda") %></p>
+                                                    <p>Data: <%# Eval("data_encomenda", "{0:MM/dd/yyyy}") %></p>
+                                                    <p>Total: <%# Eval("total") %> €</p>
+                                                    <p>Status: <%# Eval("status") %></p>
+                                                    <p>Método de Pagamento: <%# Eval("metodoPagamento") %></p>
 
-                                                            <h3>Products</h3>
+                                                    <h3>Products</h3>
 
-                                                            <asp:Repeater ID="Repeater2" runat="server">
-                                                                <ItemTemplate>
-                                                                    <p>
-                                                                        Nome do Produto: <%# Eval("nome") %><br />
-                                                                        Subtotal: <%# Eval("subtotal", "{0:C}") %><br />
-                                                                        Marca: <%# Eval("marca_nome") %>
-                                                                    </p>
-                                                                </ItemTemplate>
-                                                            </asp:Repeater>
-                                                        </div>
-                                                    </div>
+                                                    <asp:Repeater ID="Repeater2" runat="server">
+                                                        <ItemTemplate>
+                                                            <p>
+                                                                Nome do Produto: <%# Eval("nome") %><br />
+                                                                Subtotal: <%# Eval("subtotal") %> €<br />
+                                                                Marca: <%# Eval("marca_nome") %>
+                                                            </p>
+                                                        </ItemTemplate>
+                                                    </asp:Repeater>
                                                 </div>
                                             </div>
-                                        </ItemTemplate>
-                                    </asp:Repeater>
-                                </ContentTemplate>
-                            </asp:UpdatePanel>
+                                        </div>
+                                    </div>
+                                </ItemTemplate>
+                            </asp:Repeater>
                             <!-- End Default Accordion Example -->
                         </div>
                     </div>
@@ -81,17 +71,5 @@
         </section>
 
     </main>
-
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            // Attach a click event to the accordion buttons.
-            $('.accordion-button').click(function (e) {
-                e.preventDefault(); // Prevent the default behavior of the button.
-                var target = $(this).data('bs-target'); // Get the target element from the data attribute.
-                $(target).collapse('toggle'); // Toggle the collapse element.
-            });
-        });
-    </script>
 
 </asp:Content>

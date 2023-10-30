@@ -43,23 +43,27 @@ namespace AutoParts
                     // Bind the orders to the Repeater1 control.
                     Repeater1.DataSource = ordersTable;
                     Repeater1.DataBind();
-
                 }
             }
         }
 
-        protected void Repeater1_ItemCommand(object source, RepeaterCommandEventArgs e)
+        protected void Repeater1_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
-            if (e.CommandName == "ShowProducts")
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
-                int id_encomenda = Convert.ToInt32(e.CommandArgument);
-                // Fetch and display the products for the selected order.
-                DisplayProducts(id_encomenda, e.Item);
+                // Get the order ID from the data item in the Repeater1 control.
+                DataRowView orderRow = e.Item.DataItem as DataRowView;
+                int orderID = (int)orderRow["id_encomenda"];
+
+                // Find the Repeater2 control inside the current Repeater1 item.
+                Repeater Repeater2 = e.Item.FindControl("Repeater2") as Repeater;
+
+                // Call the DisplayProducts method to populate products for the current order.
+                DisplayProducts(orderID, Repeater2);
             }
         }
 
-
-        private void DisplayProducts(int id_encomenda, RepeaterItem item)
+        private void DisplayProducts(int id_encomenda, Repeater Repeater2)
         {
             // Assuming you have a database connection string.
             string connectionString = ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString;
@@ -68,18 +72,12 @@ namespace AutoParts
             {
                 connection.Open();
 
-                // Modify the SQL query to select all products in the shopping cart for the specified user and order.
-
-
+                // Modify the SQL query to select all products in the shopping cart for the specified order.
                 string query = "SELECT produtos.nome, (produtos.preco * carrinho.quantidade) AS subtotal, marcas.nome AS marca_nome " +
-              "FROM carrinho " +
-              "INNER JOIN produtos ON carrinho.produtoID = produtos.id_produto " +
-              "INNER JOIN marcas ON produtos.marca = marcas.id_marca " +
-              "WHERE carrinho.encomenda = @id_encomenda";
-
-
-
-
+                    "FROM carrinho " +
+                    "INNER JOIN produtos ON carrinho.produtoID = produtos.id_produto " +
+                    "INNER JOIN marcas ON produtos.marca = marcas.id_marca " +
+                    "WHERE carrinho.encomenda = @id_encomenda";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
@@ -89,13 +87,13 @@ namespace AutoParts
                     adapter.Fill(productsTable);
 
                     // Bind the product details to the Repeater2 control inside the accordion.
-                    Repeater Repeater2 = (Repeater)item.FindControl("Repeater2");
                     Repeater2.DataSource = productsTable;
                     Repeater2.DataBind();
                 }
             }
         }
 
-       
+
+
     }
 }
