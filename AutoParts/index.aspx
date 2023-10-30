@@ -52,41 +52,45 @@
     <section id="featured-products" class="product-store padding-large">
         <div class="container">
             <div class="section-header d-flex flex-wrap align-items-center justify-content-between">
-                <h2 class="section-title">Featured Products</h2>
+                <h2 class="section-title">4 das nossas melhores marcas!</h2>
                 <div class="btn-wrap">
-                    <a href="shop.html" class="d-flex align-items-center">View all products <i class="icon icon icon-arrow-io"></i></a>
+                    <a href="montra.aspx" class="d-flex align-items-center">Ver todos os produtos <i class="icon icon icon-arrow-io"></i></a>
                 </div>
             </div>
             <div class="swiper product-swiper overflow-hidden">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <div class="product-item">
-                            <div class="image-holder">
-                                <img src="assets/images/product-item1.jpg" alt="Books" class="product-image">
-                            </div>
-                            <div class="cart-concern">
-                                <div class="cart-button d-flex justify-content-between align-items-center">
-                                    <button type="button" class="btn-wrap cart-link d-flex align-items-center">
-                                        add to cart <i class="icon icon-arrow-io"></i>
-                                    </button>
-                                    <button type="button" class="view-btn tooltip
+                    <asp:Repeater ID="Repeater1" runat="server">
+                        <ItemTemplate>
+                            <div class="swiper-slide">
+                                <div class="product-item">
+                                    <div class="image-holder">
+                                        <img src="assets/images/product-item1.jpg" alt="Books" class="product-image">
+                                    </div>
+                                    <div class="cart-concern">
+                                        <div class="cart-button d-flex justify-content-between align-items-center">
+                                            <button type="button" class="btn-wrap cart-link d-flex align-items-center">
+                                                add to cart <i class="icon icon-arrow-io"></i>
+                                            </button>
+                                            <button type="button" class="view-btn tooltip
                         d-flex">
-                                        <i class="icon icon-screen-full"></i>
-                                        <span class="tooltip-text">Quick view</span>
-                                    </button>
-                                    <button type="button" class="wishlist-btn">
-                                        <i class="icon icon-heart"></i>
-                                    </button>
+                                                <i class="icon icon-screen-full"></i>
+                                                <span class="tooltip-text">Quick view</span>
+                                            </button>
+                                            <button type="button" class="wishlist-btn">
+                                                <i class="icon icon-heart"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="product-detail">
+                                        <h3 class="product-title">
+                                            <a href="single-product.html">Full sleeve cover shirt</a>
+                                        </h3>
+                                        <span class="item-price text-primary">$40.00</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="product-detail">
-                                <h3 class="product-title">
-                                    <a href="single-product.html">Full sleeve cover shirt</a>
-                                </h3>
-                                <span class="item-price text-primary">$40.00</span>
-                            </div>
-                        </div>
-                    </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
                     <div class="swiper-slide">
                         <div class="product-item">
                             <div class="image-holder">
@@ -1543,64 +1547,7 @@
         </div>
     </section>
 
-    <section id="brand-collection" class="padding-medium bg-light-grey">
-        <div class="container">
-            <div class="d-flex flex-wrap justify-content-between">
-                <img src="assets/images/brand1.png" alt="phone" class="brand-image">
-                <img src="assets/images/brand2.png" alt="phone" class="brand-image">
-                <img src="assets/images/brand3.png" alt="phone" class="brand-image">
-                <img src="assets/images/brand4.png" alt="phone" class="brand-image">
-                <img src="assets/images/brand5.png" alt="phone" class="brand-image">
-            </div>
-        </div>
-    </section>
 
-    <section id="instagram" class="padding-large">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Follow our instagram</h2>
-            </div>
-            <p>
-                Our official Instagram account <a href="#">@ultras</a> or <a href="#">#ultras_clothing</a>
-            </p>
-            <div class="row d-flex flex-wrap justify-content-between">
-                <div class="col-lg-2 col-md-4 col-sm-6">
-                    <figure class="zoom-effect">
-                        <img src="assets/images/insta-image1.jpg" alt="instagram" class="insta-image">
-                        <i class="icon icon-instagram"></i>
-                    </figure>
-                </div>
-                <div class="col-lg-2 col-md-4 col-sm-6">
-                    <figure class="zoom-effect">
-                        <img src="assets/images/insta-image2.jpg" alt="instagram" class="insta-image">
-                        <i class="icon icon-instagram"></i>
-                    </figure>
-                </div>
-                <div class="col-lg-2 col-md-4 col-sm-6">
-                    <figure class="zoom-effect">
-                        <img src="assets/images/insta-image3.jpg" alt="instagram" class="insta-image">
-                        <i class="icon icon-instagram"></i>
-                    </figure>
-                </div>
-                <div class="col-lg-2 col-md-4 col-sm-6">
-                    <figure class="zoom-effect">
-                        <img src="assets/images/insta-image4.jpg" alt="instagram" class="insta-image">
-                        <i class="icon icon-instagram"></i>
-                    </figure>
-                </div>
-                <div class="col-lg-2 col-md-4 col-sm-6">
-                    <figure class="zoom-effect">
-                        <img src="assets/images/insta-image5.jpg" alt="instagram" class="insta-image">
-                        <i class="icon icon-instagram"></i>
-                    </figure>
-                </div>
-                <div class="col-lg-2 col-md-4 col-sm-6">
-                    <figure class="zoom-effect">
-                        <img src="assets/images/insta-image6.jpg" alt="instagram" class="insta-image">
-                        <i class="icon icon-instagram"></i>
-                    </figure>
-                </div>
-            </div>
-        </div>
-    </section>
+
+
 </asp:Content>
