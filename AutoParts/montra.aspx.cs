@@ -49,6 +49,9 @@ namespace AutoParts
             if (!IsPostBack)
             {
 
+               
+
+
                 if (Request.QueryString["categoryID"] != null)
                 {
                     categoryId = Convert.ToInt32(Request.QueryString["categoryID"]);

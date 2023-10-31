@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AngleSharp.Dom;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static AutoParts.produto;
 
 namespace AutoParts
 {
@@ -40,6 +42,41 @@ namespace AutoParts
                     }
                     con.Close();
                 }
+
+               
+                string query2 = @"
+    SELECT TOP 8 p.id_produto, p.nome, p.preco, p.imagem, p.contenttype
+    FROM produtos p
+    LEFT JOIN carrinho c ON p.id_produto = c.produtoID
+    WHERE p.stock > 1 AND p.estado = 'true' AND c.ativo = 'false'
+    GROUP BY p.id_produto, p.nome, p.preco, p.imagem, p.contenttype
+    ORDER BY SUM(ISNULL(c.quantidade, 0)) DESC";
+
+
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+
+                    using (SqlCommand command2 = new SqlCommand(query2, con))
+                    {
+                        using (SqlDataReader reader2 = command2.ExecuteReader())
+                        {
+                            if (reader2.HasRows)
+                            {
+                                Repeater2.DataSource = reader2;
+                                Repeater2.DataBind();
+                            }
+                            else
+                            {
+                                // Handle the case when no rows are returned (e.g., display a message).
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+
+
             }
             catch (Exception ex)
             {
