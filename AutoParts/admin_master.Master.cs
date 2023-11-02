@@ -11,10 +11,10 @@ namespace AutoParts
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            /*if (Session["isLogged"] == null || (String)Session["perfil"] != "admin")
+            if (Session["isLogged"] == null || (String)Session["perfil"] != "admin")
             {
                 Response.Redirect("login.aspx");
-            }*/
+            }
         }
     }
 }

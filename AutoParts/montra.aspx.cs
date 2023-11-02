@@ -68,6 +68,19 @@ namespace AutoParts
 
                     BindDataIntoRepeater(query);
                 }
+
+                if (Request.QueryString["procurarPre"] != null)
+                {
+                    procurar = Request.QueryString["procurarPre"];
+
+                    query = "SELECT p.id_produto, p.nome, p.numero_artigo AS codigoArtigo, p.preco, p.imagem, p.contenttype, p.marca, p.estado " +
+"FROM produtos p " +
+"WHERE estado = 'true' AND (p.nome LIKE '%" + procurar + "%' OR p.numero_artigo LIKE '%" + procurar + "%')";
+
+                    BindDataIntoRepeater(query);
+
+
+                }
             }
 
             BindDataIntoRepeater(query);

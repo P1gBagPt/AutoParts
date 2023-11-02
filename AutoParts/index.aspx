@@ -34,7 +34,7 @@
                                     <h2 class="banner-title">Precisas de um turbo?</h2>
                                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu feugiat amet, libero ipsum enim pharetra hac.</p>
                                     <div class="btn-wrap">
-                                        <a href="montra.aspx?categoryID=18" class="btn btn-dark d-flex align-items-center" tabindex="0">Comprar turbo <i class="icon icon-arrow-io"></i>
+                                        <a href="montra.aspx?procurarPre=turbo" class="btn btn-dark d-flex align-items-center" tabindex="0">Comprar turbo <i class="icon icon-arrow-io"></i>
                                         </a>
                                     </div>
                                 </div>
@@ -49,7 +49,7 @@
     <section id="featured-products" class="product-store padding-large">
         <div class="container">
             <div class="section-header d-flex flex-wrap align-items-center justify-content-between">
-                <h2 class="section-title">4 das nossas melhores marcas!</h2>
+                <h2 class="section-title">Alguns dos nossos produtos!</h2>
                 <div class="btn-wrap">
                     <a href="montra.aspx" class="d-flex align-items-center">Ver todos os produtos <i class="icon icon icon-arrow-io"></i></a>
                 </div>

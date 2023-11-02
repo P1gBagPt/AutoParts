@@ -19,7 +19,7 @@ namespace AutoParts
             try
             {
                 var connectionString = ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ToString();
-                string query = "SELECT TOP 4 id_produto, nome, preco, imagem, contenttype FROM produtos WHERE stock > 1 AND estado = 1";
+                string query = "SELECT TOP 4 id_produto, nome, preco, imagem, contenttype FROM produtos WHERE stock > 1 AND estado = 1 ORDER BY NEWID();";
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
