@@ -49,7 +49,12 @@ namespace AutoParts
         }
         protected void Page_Load(object sender, EventArgs e)
         {
-            Session["userId"] = 7;
+            if (Session["userId"] == null)
+            {
+                Response.Redirect("login.aspx");
+            }
+            else {
+
             id_user = Convert.ToInt32(Session["userId"].ToString());
 
             total = 0;
@@ -171,6 +176,8 @@ namespace AutoParts
             catch (Exception ex)
             {
                 lbl_vazio.Text = ex.Message;
+            }
+
             }
 
         }

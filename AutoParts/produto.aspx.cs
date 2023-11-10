@@ -218,7 +218,6 @@ namespace AutoParts
         protected void btn_adicionar_carrinho_Click(object sender, EventArgs e)
         {
             //TEMP
-            Session["userId"] = 7;
             try
             {
 

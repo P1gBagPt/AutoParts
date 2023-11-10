@@ -16,8 +16,6 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <section id="billboard" class="overflow-hidden">
-
-
         <button class="button-prev">
             <i class="icon icon-chevron-left"></i>
         </button>

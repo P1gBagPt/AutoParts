@@ -63,7 +63,7 @@ namespace AutoParts
                         GoogleProfile profile = new JavaScriptSerializer().Deserialize<GoogleProfile>(json);
                         Session["user_email"] = profile.Email;
                         pw_user = profile.Id;
-                        controlo = "1";
+                        Session["controlo"] = "1";
                     }
                     if (Request.QueryString["error"] == "access_denied")
                     {
@@ -79,7 +79,7 @@ namespace AutoParts
                         FaceBookUser faceBookUser = new JavaScriptSerializer().Deserialize<FaceBookUser>(data);
                         Session["user_email"] = faceBookUser.Email;
                         pw_user = faceBookUser.Id;
-                        controlo = "1";
+                        Session["controlo"] = "1";
                     }
 
                     if (Request.QueryString["error"] == "access_denied")
@@ -92,7 +92,7 @@ namespace AutoParts
 
 
 
-                if (controlo == "1")
+                if (Session["controlo"] as string == "1")
                 {
                     SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
 
@@ -134,6 +134,10 @@ namespace AutoParts
                     retorno_perfil.Direction = ParameterDirection.Output;
                     cmd.Parameters.Add(retorno_perfil);
 
+                    SqlParameter retorno_revenda = new SqlParameter("@retorno_revenda_ver", SqlDbType.Bit);
+                    retorno_revenda.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(retorno_revenda);
+
                     myConn.Open();
                     cmd.ExecuteNonQuery();
 
@@ -147,6 +151,7 @@ namespace AutoParts
                         respostaId = Convert.ToInt32(cmd.Parameters["@retorno_id"].Value);
                         respostaTipoCliente = Convert.ToInt32(cmd.Parameters["@retorno_tipoCliente"].Value);
                         respostaPerfil = cmd.Parameters["@retorno_perfil"].Value.ToString();
+                        respostaRevenda = Convert.ToBoolean(cmd.Parameters["@retorno_revenda_ver"].Value);
                     }
 
 
@@ -175,6 +180,7 @@ namespace AutoParts
                             Session["username"] = respostaUsername;
                             Session["user_email"] = respostaEmail;
                             Session["tipo_cliente"] = respostaTipoCliente;
+                            Session["revenda"] = respostaRevenda;
 
                             Response.Redirect("index.aspx");
                         }
@@ -197,6 +203,7 @@ namespace AutoParts
 
         public static string respostaUsername, respostaEmail, respostaPerfil;
         public static int respostaVerificado, respostaId, respostaTipoCliente;
+        public static bool respostaRevenda;
 
 
 
@@ -282,6 +289,10 @@ namespace AutoParts
                 retorno_perfil.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(retorno_perfil);
 
+                SqlParameter retorno_revenda = new SqlParameter("@retorno_revenda_ver", SqlDbType.Bit);
+                retorno_revenda.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(retorno_revenda);
+
                 myConn.Open();
                 cmd.ExecuteNonQuery();
 
@@ -295,6 +306,8 @@ namespace AutoParts
                     respostaId = Convert.ToInt32(cmd.Parameters["@retorno_id"].Value);
                     respostaTipoCliente = Convert.ToInt32(cmd.Parameters["@retorno_tipoCliente"].Value);
                     respostaPerfil = cmd.Parameters["@retorno_perfil"].Value.ToString();
+                    respostaRevenda = Convert.ToBoolean(cmd.Parameters["@retorno_revenda_ver"].Value);
+
                 }
 
 
@@ -323,6 +336,8 @@ namespace AutoParts
                         Session["username"] = respostaUsername;
                         Session["user_email"] = respostaEmail;
                         Session["tipo_cliente"] = respostaTipoCliente;
+                        Session["revenda"] = respostaRevenda;
+
 
                         Response.Redirect("index.aspx");
                     }

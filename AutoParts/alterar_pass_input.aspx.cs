@@ -62,6 +62,8 @@ namespace AutoParts
                                 servidor.EnableSsl = true;
 
                                 servidor.Send(mail);
+                                lbl_erro.Enabled = true;
+                                lbl_erro.Visible = true;
                                 lbl_erro.Text = "Verifica a tua caixa de email para mudares a tua password!";
                                 lbl_erro.ForeColor = System.Drawing.Color.Green;
                                 lbl_erro.Font.Size = 25;

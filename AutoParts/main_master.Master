@@ -85,7 +85,14 @@
                             <div class="col-md-4 header-contact">
                             </div>
                             <div class="col-md-4 shipping-purchase text-center">
-                                <p>Envios gratis!</p>
+                                 <%if (Session["perfil"] != null && Session["perfil"].ToString() == "admin")
+     {%>
+ <a href="index_admin.aspx">Painel Administrativo
+ </a>
+ <%} else {%>
+                                 <p>Envios gratis!</p>
+
+ <% }%>
                             </div>
                             <div class="col-md-4 col-sm-12 user-items">
                                 <ul class="d-flex justify-content-end list-unstyled">

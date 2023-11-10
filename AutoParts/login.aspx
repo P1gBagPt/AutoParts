@@ -90,12 +90,12 @@
                 color: rgba(255, 255, 255, 0.87);
             }
 
-                        .social-message {
-    display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    height: 100%; /* Adjust this value if necessary to control the vertical centering. */
-}
+        .social-message {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            height: 100%; /* Adjust this value if necessary to control the vertical centering. */
+        }
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
@@ -126,7 +126,12 @@
                             </asp:LinkButton>
                         </div>
 
-
+                        <p class="loginhere">
+                            Não te lembras da password ? <a href="recuperar_password.aspx" class="loginhere-link">Aqui</a>
+                        </p>
+                        <p class="loginhere">
+                            Queres mudar a password ? <a href="alterar_password.aspx" class="loginhere-link">Reset</a>
+                        </p>
 
                         <div class="form-group">
                             <div class="row">

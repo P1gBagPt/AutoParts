@@ -106,33 +106,40 @@ namespace AutoParts
         {
             if (e.CommandName == "AdicionarCarTopMarcas")
             {
-                int idProduto = int.Parse(e.CommandArgument.ToString());
+                if (Session["isLogged"] == null)
+                {
+                    Response.Redirect("login.aspx");
+                }
+                else
+                {
+                    int idProduto = int.Parse(e.CommandArgument.ToString());
 
-                Session["userId"] = 7;
+                    int id_user = Convert.ToInt32(Session["userId"].ToString());
 
-                int id_user = Convert.ToInt32(Session["userId"].ToString());
+                    SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
 
-                SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
+                    SqlCommand myCommand = new SqlCommand();
+                    myCommand.CommandType = CommandType.StoredProcedure;
+                    myCommand.CommandText = "carrinho_quick";
 
-                SqlCommand myCommand = new SqlCommand();
-                myCommand.CommandType = CommandType.StoredProcedure;
-                myCommand.CommandText = "carrinho_quick";
+                    myCommand.Connection = myConn;
 
-                myCommand.Connection = myConn;
+                    myCommand.Parameters.AddWithValue("@idUser", id_user);
+                    myCommand.Parameters.AddWithValue("@idProduto", idProduto);
 
-                myCommand.Parameters.AddWithValue("@idUser", id_user);
-                myCommand.Parameters.AddWithValue("@idProduto", idProduto);
+                    SqlParameter valor = new SqlParameter();
+                    valor.ParameterName = "@retorno";
+                    valor.Direction = ParameterDirection.Output;
+                    valor.SqlDbType = SqlDbType.Int;
 
-                SqlParameter valor = new SqlParameter();
-                valor.ParameterName = "@retorno";
-                valor.Direction = ParameterDirection.Output;
-                valor.SqlDbType = SqlDbType.Int;
+                    myCommand.Parameters.Add(valor);
 
-                myCommand.Parameters.Add(valor);
+                    myConn.Open();
+                    myCommand.ExecuteNonQuery();
+                    myConn.Close();
+                }
 
-                myConn.Open();
-                myCommand.ExecuteNonQuery();
-                myConn.Close();
+                
 
                
             }

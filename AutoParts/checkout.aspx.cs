@@ -24,9 +24,6 @@ namespace AutoParts
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            Session["userId"] = 7;
-            Session["user_email"] = "marcarpremio@gmail.com";
-
             id_user = Convert.ToInt32(Session["userId"].ToString());
             email_user = Session["user_email"].ToString();
 

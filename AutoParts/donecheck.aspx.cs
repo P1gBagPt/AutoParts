@@ -15,9 +15,7 @@ namespace AutoParts
         public static int id_user;
         protected void Page_Load(object sender, EventArgs e)
         {
-            Session["userId"] = 7;
             id_user = Convert.ToInt32(Session["userId"].ToString());
-            Session["EncomendaID"] = 14;
             try
             {
                 int encomenda_id = (int)Session["EncomendaID"];

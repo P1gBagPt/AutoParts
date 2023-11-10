@@ -16,5 +16,12 @@ namespace AutoParts
                 Response.Redirect("login.aspx");
             }
         }
+
+        protected void btn_logout_Click(object sender, EventArgs e)
+        {
+            Session.Clear();
+
+            Response.Redirect("index.aspx");
+        }
     }
 }
