@@ -34,7 +34,8 @@
                                                             <a href='<%# "produto.aspx?productId=" + Eval("id_produto") %>'><%# Eval("nome") %></a>
                                                         </h3>
                                                         <div class="card-price">
-                                                            <span class="money text-primary"><%# Eval("preco") %> €</span>
+                                                            <span class="money text-primary"><%# GetFormattedPrice(Eval("preco"), Convert.ToBoolean(Session["revenda"])) %></span>
+
                                                         </div>
                                                     </div>
                                                 </div>

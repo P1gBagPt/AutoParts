@@ -37,9 +37,25 @@ namespace AutoParts
 
                     if (product != null)
                     {
+                        bool revenda = Convert.ToBoolean(Session["revenda"]);
                         lbl_nome.Text = product.nome;
                         lbl_descricao.Text = product.descricao;
-                        lbl_preco.Text = product.preco.ToString();
+
+                        if (revenda)
+                        {
+                            decimal precoOriginal = product.preco;
+                            decimal precoDesconto = precoOriginal * 0.8m;
+
+                            // Exibir o preço original rasurado e o preço com desconto
+                            lbl_preco.Text = string.Format("<del>{0:N2} €</del> {1:N2} €", precoOriginal, precoDesconto);
+                            //<del>{0:N2} €</del> {1:N2} €
+                        }
+                        else
+                        {
+                            // Se não for revenda, exibir apenas o preço normal sem rasurar
+                            lbl_preco.Text = string.Format("{0:N2} €", product.preco);
+                        }
+                        //lbl_preco.Text = product.preco.ToString();
                         lbl_codigo_artigo.Text = product.codigoArtigo;
                         lbl_marca.Text = product.marca.ToString();
                         
@@ -221,6 +237,15 @@ namespace AutoParts
             try
             {
 
+                if (Session["userId"] == null)
+                {
+                    Response.Redirect("login.aspx");
+                }
+                else
+                {
+
+                
+
                 int id_user = Convert.ToInt32(Session["userId"].ToString());
                 int quantidade = Convert.ToInt32(tb_quantidade.Text);
 
@@ -273,6 +298,7 @@ namespace AutoParts
                     lbl_erro.Text = "Produto adicionado ao carrinho!";
                     lbl_erro.ForeColor = System.Drawing.Color.Green;
                 }
+                }
             }
             catch (Exception ex)
             {
@@ -281,5 +307,23 @@ namespace AutoParts
 
             
         }
+
+        protected string GetFormattedPrice(object preco, bool isRevenda)
+        {
+            decimal precoDecimal = Convert.ToDecimal(preco);
+
+            if (isRevenda)
+            {
+                // Aplicar desconto de 20% para revendedores
+                decimal precoDesconto = precoDecimal * 0.8m;
+
+                // Utilize a função string.Format para garantir a formatação correta
+                return string.Format("<del>{0:N2} €</del> {1:N2} €", precoDecimal, precoDesconto);
+            }
+
+            // Se não for revenda, exibir apenas o preço normal sem rasurar
+            return string.Format("{0:N2} €", precoDecimal);
+        }
+
     }
 }

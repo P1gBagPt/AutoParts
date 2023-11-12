@@ -49,7 +49,7 @@
                         </div>
                         <h3>
                             <asp:Label ID="lbl_preco" runat="server"></asp:Label>
-                            €</h3>
+                        </h3>
 
                         <div class="mt-2">
                             <h7>

@@ -424,6 +424,7 @@ namespace AutoParts
             }
         }
 
+        public static decimal subtotal = 0;
         protected void Repeater1_ItemDataBound1(object sender, RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
@@ -431,13 +432,26 @@ namespace AutoParts
                 DataRowView dataItem = e.Item.DataItem as DataRowView;
                 int quantidade = Convert.ToInt32(dataItem["quantidade"]);
                 decimal preco = Convert.ToDecimal(dataItem["preco"]);
-                decimal subtotal = quantidade * preco;
+
+                bool revenda = Convert.ToBoolean(Session["revenda"]);
+
+                if (revenda)
+                {
+                     decimal precoDesconto = quantidade * preco;
+                     subtotal = precoDesconto * 0.8m;
+
+                }
+                else
+                {
+                     subtotal = quantidade * preco;
+                }
+
                 total += subtotal;
 
                 Label ltSubtotal = e.Item.FindControl("lbl_subtotal") as Label;
                 ltSubtotal.Text = subtotal.ToString("C", new CultureInfo("pt-PT"));
 
-                ltTotal.Text = total.ToString();
+                ltTotal.Text = total.ToString("N2");
 
             }
         }
@@ -744,6 +758,23 @@ namespace AutoParts
         protected void Repeater1_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             SetProductImage(e.Item);
+        }
+
+        protected string GetFormattedPrice(object preco, bool isRevenda)
+        {
+            decimal precoDecimal = Convert.ToDecimal(preco);
+
+            if (isRevenda)
+            {
+                // Aplicar desconto de 20% para revendedores
+                decimal precoDesconto = precoDecimal * 0.8m;
+
+                // Utilize a função string.Format para garantir a formatação correta
+                return string.Format("<del>{0:N2} €</del> {1:N2} €", precoDecimal, precoDesconto);
+            }
+
+            // Se não for revenda, exibir apenas o preço normal sem rasurar
+            return string.Format("{0:N2} €", precoDecimal);
         }
 
     }

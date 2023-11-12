@@ -71,11 +71,15 @@
                                                             <h3 class="product-title">
                                                                 <a href='<%# "produto.aspx?productId=" + Eval("id_produto") %>'><%# Eval("nome") %></a>
                                                             </h3>
-                                                            <div class="item-price text-primary"><%# Eval("preco")%> €</div>
+                                                            <div class="item-price text-primary">
+                                                                <%# GetFormattedPrice(Eval("preco"), Convert.ToBoolean(Session["revenda"])) %>
+                                                            </div>
+
                                                         </div>
                                                     </div>
                                                 </ItemTemplate>
                                             </asp:Repeater>
+
                                         </div>
                                     </div>
                                 </div>

@@ -24,6 +24,11 @@ namespace AutoParts
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["userId"] == null)
+            {
+                Response.Redirect("login.aspx");
+            }
+            else { 
             id_user = Convert.ToInt32(Session["userId"].ToString());
             email_user = Session["user_email"].ToString();
 
@@ -59,7 +64,18 @@ namespace AutoParts
                 }
                 else
                 {
-                    ltTotal.Text = total.ToString();
+                    bool revenda = Convert.ToBoolean(Session["revenda"]);
+
+                    if (revenda)
+                    {
+                        total *= 0.8m;
+                        ltTotal.Text = total.ToString("N2");
+
+                    }
+                    else
+                    {
+                        ltTotal.Text = total.ToString();
+                    }
                 }
 
                 myConn.Close();
@@ -68,7 +84,7 @@ namespace AutoParts
             {
                 ltTotal.Text = ex.Message;
             }
-
+            }
 
         }
 
@@ -168,14 +184,25 @@ namespace AutoParts
 
                         List<ProdutoCarrinho> produtosNoCarrinho = ObterProdutosDoCarrinho(encomenda_id, id_user);
 
+                        bool revenda = Convert.ToBoolean(Session["revenda"]);
+
                         foreach (var produto in produtosNoCarrinho)
                         {
                             html += $"<img src=\"data:{produto.ContentTypeImagem};base64,{Convert.ToBase64String(produto.Imagem)}\" style=\"max-width: 100px; margin-right: 10px; border: 1px solid black;\" />";
 
-                            html += string.Format("<p>Nome do Produto: <b>{0}</b> | Marca: <b>{1}</b> | Número de Artigo: <b>{2}</b> <br/> Quantidade: <b>{3}</b> | Preço Total: <b>€{4:F2}</b></p>",
-                                produto.NomeProduto, produto.Marca, produto.NumeroArtigo, produto.Quantidade, produto.PrecoTotal);
-
+                            if (revenda)
+                            {
+                                html += string.Format("<p>Nome do Produto: <b>{0}</b> | Marca: <b>{1}</b> | Número de Artigo: <b>{2}</b> <br/> Quantidade: <b>{3}</b> | Preço Total: <b>€{4:F2}</b></p>",
+                                    produto.NomeProduto, produto.Marca, produto.NumeroArtigo, produto.Quantidade, produto.PrecoTotal * 0.8m);
+                            }
+                            else
+                            {
+                                html += string.Format("<p>Nome do Produto: <b>{0}</b> | Marca: <b>{1}</b> | Número de Artigo: <b>{2}</b> <br/> Quantidade: <b>{3}</b> | Preço Total: <b>€{4:F2}</b></p>",
+                                    produto.NomeProduto, produto.Marca, produto.NumeroArtigo, produto.Quantidade, produto.PrecoTotal);
+                            }
                             html += "<hr style=\"border: 1px solid #ddd;\"/>";
+
+
 
                         }
 

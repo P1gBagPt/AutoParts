@@ -137,12 +137,27 @@ namespace AutoParts
                     myConn.Open();
                     myCommand.ExecuteNonQuery();
                     myConn.Close();
-                }
-
-                
-
-               
+                }         
             }
         }
+
+        protected string GetFormattedPrice(object preco, bool isRevenda)
+        {
+            decimal precoDecimal = Convert.ToDecimal(preco);
+
+            if (isRevenda)
+            {
+                // Aplicar desconto de 20% para revendedores
+                decimal precoDesconto = precoDecimal * 0.8m;
+
+                // Utilize a função string.Format para garantir a formatação correta
+                return string.Format("<del>{0:N2} €</del> {1:N2} €", precoDecimal, precoDesconto);
+            }
+
+            // Se não for revenda, exibir apenas o preço normal sem rasurar
+            return string.Format("{0:N2} €", precoDecimal);
+        }
+
+
     }
 }
