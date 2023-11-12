@@ -109,7 +109,7 @@
                                     </label>
                                 </div>
                                 <asp:Button ID="btn_submeter" runat="server" name="submit" class="btn btn-dark btn-full btn-medium" Text="Submeter encomenda" OnClick="btn_submeter_Click" Visible="True" />
-                                <asp:Label ID="lbl_erro" runat="server" Text="Label"></asp:Label>
+                                <asp:Label ID="lbl_erro" runat="server"></asp:Label>
                             </div>
                         </div>
                     </div>
