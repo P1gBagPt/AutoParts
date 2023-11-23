@@ -37,7 +37,8 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <p style="text-align: left;">Categoria</p>
-                                    <asp:DropDownList ID="ddl_categoria" class="form-select" runat="server" DataTextField="categoria" DataValueField="id_categoria" DataSourceID="SqlDataSource1"></asp:DropDownList><asp:SqlDataSource runat="server" ID="SqlDataSource1" ConnectionString="<%$ ConnectionStrings:autoparts_ConnectionString %>" SelectCommand="SELECT * FROM [categoria]"></asp:SqlDataSource>
+                                    <asp:DropDownList ID="ddl_categoria" class="form-select" runat="server" DataTextField="categoria" DataValueField="id_categoria" DataSourceID="SqlDataSource1"></asp:DropDownList><asp:SqlDataSource runat="server" ID="SqlDataSource3"></asp:SqlDataSource>
+                                    <asp:SqlDataSource runat="server" ID="SqlDataSource1" ConnectionString="<%$ ConnectionStrings:autoparts_ConnectionString %>" SelectCommand="SELECT * FROM [categoria]"></asp:SqlDataSource>
                                 </div>
                                 <div class="col-lg-4">
                                     <p style="text-align: left;">Imagem</p>

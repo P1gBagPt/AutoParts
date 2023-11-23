@@ -11,7 +11,7 @@ namespace AutoParts
 {
 
 
-    public partial class registerWmaster
+    public partial class register
     {
 
         /// <summary>

@@ -40,7 +40,6 @@ namespace AutoParts
         public static string socialType = "";
         public static string pw_user = "";
 
-
         protected void Page_Load(object sender, EventArgs e)
         {
             GoogleConnect.ClientId = "972730968305-o0llll7q9ot2i4ohrgpd382l6bc89v5k.apps.googleusercontent.com";
@@ -88,8 +87,6 @@ namespace AutoParts
                         return;
                     }
                 }
-
-
 
 
                 if (Session["controlo"] as string == "1")

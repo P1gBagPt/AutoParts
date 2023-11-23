@@ -14,10 +14,10 @@ using ASPSnippets.FaceBookAPI;
 
 namespace AutoParts
 {
-    public partial class registerWmaster : System.Web.UI.Page
+    public partial class register : System.Web.UI.Page
     {
 
-        public static string controlo = "";
+        public static string controlo2 = "";
         public static string socialType = "";
 
         protected void Page_Load(object sender, EventArgs e)
@@ -43,7 +43,7 @@ namespace AutoParts
                         Session["email_p"] = profile.Email;
                         Session["name_p"] = profile.Name;
                         Session["id_p"] = profile.Id;
-                        controlo = "1";
+                        controlo2 = "1";
                     }
                     if (Request.QueryString["error"] == "access_denied")
                     {
@@ -61,7 +61,7 @@ namespace AutoParts
                         Session["email_p"] = faceBookUser.Email;
                         Session["name_p"] = faceBookUser.Name;
                         Session["id_p"] = faceBookUser.Id;
-                        controlo = "1";
+                        controlo2 = "1";
                     }
 
                     if (Request.QueryString["error"] == "access_denied")
@@ -74,7 +74,7 @@ namespace AutoParts
                 
 
 
-                if (controlo == "1")
+                if (controlo2 == "1")
                 {
                     //string username = GenerateName(7);
                     SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);

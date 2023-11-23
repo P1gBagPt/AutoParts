@@ -15,11 +15,11 @@
                     <div class="row mt-2">
                         <div class="col-md-6">
                             <label class="labels">Nome</label>
-                            <asp:TextBox ID="tb_nome" runat="server" placeholder="Nome" CssClass="form-control"></asp:TextBox>
+                            <asp:TextBox ID="tb_nome" runat="server" placeholder="Nome" CssClass="form-control" Enabled="False"></asp:TextBox>
                         </div>
                         <div class="col-md-6">
                             <label class="labels">Nome de utilizador</label>
-                            <asp:TextBox ID="tb_username" runat="server" placeholder="Username" CssClass="form-control"></asp:TextBox>
+                            <asp:TextBox ID="tb_username" runat="server" placeholder="Username" CssClass="form-control" Enabled="False"></asp:TextBox>
                         </div>
                     </div>
                     <div class="row mt-3">
@@ -33,8 +33,8 @@
                             <asp:Button ID="btn_vendedor" runat="server" Text="Pedir conta vendedor" OnClick="btn_vendedor_Click" />
                         </div>
                         <div class="col-md-6">
-                            <label class="labels">Guardar Alterações</label>
-                            <asp:Button ID="btn_guardar_altera" runat="server" CssClass="btn btn-primary profile-button" Text="Guardar Alterações" OnClick="btn_guardar_altera_Click" />
+<%--                            <label class="labels">Guardar Alterações</label>--%>
+                            <asp:Button ID="btn_guardar_altera" runat="server" CssClass="btn btn-primary profile-button" Text="Guardar Alterações" OnClick="btn_guardar_altera_Click" Visible="False" EnableTheming="True" Enabled="False" />
                         </div>
                         <asp:Label ID="lbl_guardar" runat="server" Visible="False" Enabled="False"></asp:Label>
                         <div class="col-md-6">

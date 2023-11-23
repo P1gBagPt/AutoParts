@@ -9,7 +9,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body text-center">
-                        <h1 class="card-title">Adicionar Produto</h1>
+                        <h1 class="card-title">Adicionar Categoria</h1>
 
                         <div class="row">
                             <div class="col-lg-12">

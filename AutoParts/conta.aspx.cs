@@ -105,6 +105,8 @@ namespace AutoParts
 
             cmd.Connection = myConn;
 
+            cmd.Parameters.AddWithValue("@userID", userId);
+
             myConn.Open();
             cmd.ExecuteNonQuery();
             myConn.Close();
@@ -117,28 +119,52 @@ namespace AutoParts
 
         protected void btn_guardar_altera_Click(object sender, EventArgs e)
         {
-
             try
             {
                 SqlConnection myConn = new SqlConnection(ConfigurationManager.ConnectionStrings["autoparts_ConnectionString"].ConnectionString);
-                SqlCommand cmd = new SqlCommand();
 
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = "update_user_info";
-                cmd.Connection = myConn;
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "update_user_info";
+                    cmd.Connection = myConn;
 
-                cmd.Parameters.AddWithValue("@userID", userId);
-                cmd.Parameters.AddWithValue("@nome", tb_nome.Text);
-                cmd.Parameters.AddWithValue("@username", tb_username.Text);
+                    // Retrieve the latest values from the text fields
+                    string newNome = tb_nome.Text;
+                    string newUsername = tb_username.Text;
 
-                myConn.Open();
-                cmd.ExecuteNonQuery();
-                myConn.Close();
+                    cmd.Parameters.AddWithValue("@userID", userId);
+                    cmd.Parameters.AddWithValue("@nome", newNome);
+                    cmd.Parameters.AddWithValue("@username", newUsername);
 
-                lbl_guardar.Enabled = true;
-                lbl_guardar.Visible = true;
-                lbl_guardar.Text = "Alterações efetuadas com sucesso!";
-                lbl_guardar.ForeColor = Color.Green;
+                    // Add the output parameter
+                    SqlParameter rowsAffectedParam = new SqlParameter("@rowsAffected", SqlDbType.Int);
+                    rowsAffectedParam.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(rowsAffectedParam);
+
+                    myConn.Open();
+                    cmd.ExecuteNonQuery();
+
+                    // Check the value of the output parameter
+                    int rowsAffected = (int)rowsAffectedParam.Value;
+
+                    myConn.Close();
+
+                    if (rowsAffected > 0)
+                    {
+                        lbl_guardar.Enabled = true;
+                        lbl_guardar.Visible = true;
+                        lbl_guardar.Text = "Alterações efetuadas com sucesso!";
+                        lbl_guardar.ForeColor = Color.Green;
+                    }
+                    else
+                    {
+                        lbl_guardar.Enabled = true;
+                        lbl_guardar.Visible = true;
+                        lbl_guardar.Text = "Nenhuma alteração efetuada. Usuário não encontrado.";
+                        lbl_guardar.ForeColor = Color.Red;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -148,8 +174,8 @@ namespace AutoParts
                 lbl_guardar.Text = "Erro ao efetuar alterações: " + ex.Message;
                 lbl_guardar.ForeColor = Color.Red;
             }
-
         }
+
 
         private void BindOrders(int userID)
         {
